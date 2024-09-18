@@ -5,6 +5,7 @@ import com.modelsapp.models_api.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.List;
 
 @Service
@@ -16,11 +17,11 @@ public class ModelService {
         return modelRepository.findAll();
     }
 
-    public Model save(Model model) {
+    public Model saveModel(Model model) {
         return modelRepository.save(model);
     }
 
-    public void deleteById(Long id) {
-        modelRepository.deleteById(id);
+    public Optional<Model> findById(Long id) {
+        return modelRepository.findById(id);
     }
 }
