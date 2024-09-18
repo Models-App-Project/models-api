@@ -2,11 +2,13 @@ package com.modelsapp.models_api.controller;
 
 import com.modelsapp.models_api.model.Model;
 import com.modelsapp.models_api.service.ModelService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/models")
@@ -27,4 +29,11 @@ public class ModelController {
         Optional<Model> model = modelService.findById(id);
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/findAll")
+    public ResponseEntity<List<Model>> getAllModels() {
+        List<Model> models = modelService.findAll();
+        return ResponseEntity.ok(models);
+    }
+    
 }
