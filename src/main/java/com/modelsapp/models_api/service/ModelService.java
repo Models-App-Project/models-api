@@ -14,18 +14,22 @@ public class ModelService {
     @Autowired
     private ModelRepository modelRepository;
 
+    // Método para buscar todas as modelos
     public List<Model> findAll() {
         return modelRepository.findAll();
     }
 
+    // Método para salvar uma nova modelo
     public Model saveModel(Model model) {
         return modelRepository.save(model);
     }
 
+    // Método para buscar uma modelo por ID
     public Optional<Model> findById(UUID id) {
         return modelRepository.findById(id);
     }
 
+    // Método para buscar uma modelo por nome
     public Optional<Model> findByName(String name) {
         return modelRepository.findByName(name);
     }

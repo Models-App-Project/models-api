@@ -31,17 +31,17 @@ public class ModelController {
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // Endpoint para buscar todas as modelos
     @GetMapping("/findAll")
     public ResponseEntity<List<Model>> getAllModels() {
         List<Model> models = modelService.findAll();
         return ResponseEntity.ok(models);
     }
 
+    // Endpoint para buscar uma modelo por nome
     @GetMapping("/findByName")
     public ResponseEntity<Model> getModelByName(@RequestParam String name) {
         Optional<Model> model = modelService.findByName(name);
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-    
-
 }
