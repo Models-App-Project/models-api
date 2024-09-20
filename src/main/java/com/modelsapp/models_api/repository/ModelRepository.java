@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Repository
 public interface ModelRepository extends JpaRepository<Model, UUID> {
-    public Optional<Model> findById(Long id);
+    public Optional<Model> findById(UUID id);
 
     public Optional<Model> findByName(String name);
 }

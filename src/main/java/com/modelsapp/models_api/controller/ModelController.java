@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.UUID;
 import java.util.Optional;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class ModelController {
 
     // Endpoint para buscar uma modelo por ID
     @GetMapping("/{id}") 
-    public ResponseEntity<Model> getModelById(@PathVariable Long id) {
+    public ResponseEntity<Model> getModelById(@PathVariable UUID id) {
         Optional<Model> model = modelService.findById(id);
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -42,5 +43,5 @@ public class ModelController {
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     
-    
+
 }
