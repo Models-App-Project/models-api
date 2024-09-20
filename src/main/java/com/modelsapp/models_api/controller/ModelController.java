@@ -35,5 +35,12 @@ public class ModelController {
         List<Model> models = modelService.findAll();
         return ResponseEntity.ok(models);
     }
+
+    @GetMapping("/findByName")
+    public ResponseEntity<Model> getModelByName(@RequestParam String name) {
+        Optional<Model> model = modelService.findByName(name);
+        return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    
     
 }
