@@ -27,21 +27,21 @@ public class ModelController {
     // Endpoint para buscar uma modelo por ID
     @GetMapping("/{id}") 
     public ResponseEntity<Model> getModelById(@PathVariable UUID id) {
-        Optional<Model> model = modelService.findById(id);
+        Optional<Model> model = modelService.findModelById(id);
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Endpoint para buscar todas as modelos
     @GetMapping("/findAll")
     public ResponseEntity<List<Model>> getAllModels() {
-        List<Model> models = modelService.findAll();
+        List<Model> models = modelService.findAllModels();
         return ResponseEntity.ok(models);
     }
 
     // Endpoint para buscar uma modelo por nome
     @GetMapping("/findByName")
     public ResponseEntity<Model> getModelByName(@RequestParam String name) {
-        Optional<Model> model = modelService.findByName(name);
+        Optional<Model> model = modelService.findModelByName(name);
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

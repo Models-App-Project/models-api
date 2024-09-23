@@ -15,7 +15,7 @@ public class ModelService {
     private ModelRepository modelRepository;
 
     // Método para buscar todas as modelos
-    public List<Model> findAll() {
+    public List<Model> findAllModels() {
         return modelRepository.findAll();
     }
 
@@ -25,12 +25,12 @@ public class ModelService {
     }
 
     // Método para buscar uma modelo por ID
-    public Optional<Model> findById(UUID id) {
-        return modelRepository.findById(id);
+    public Optional<Model> findModelById(UUID id) {
+        return modelRepository.findModelById(id);
     }
 
     // Método para buscar uma modelo por nome
-    public Optional<Model> findByName(String name) {
-        return modelRepository.findByName(name);
+    public Optional<Model> findModelByName(String name) {
+        return modelRepository.findModelByName(name);
     }
 }
