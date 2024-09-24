@@ -7,6 +7,8 @@ import org.hibernate.annotations.ManyToAny;
 
 import jakarta.persistence.*;
 
+import Entity.User; 
+
 @Entity
 @Table(name = "roles")
 public class Role implements Serializable {
