@@ -75,6 +75,32 @@ public class ModelControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    public void testAddModelNegativeAge() throws Exception {
+        // Mockando o comportamento do serviço
+        given(modelService.saveModel(any(Model.class))).willReturn(model);
+
+        // Enviando requisição POST
+        mockMvc.perform(post("/models/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\n" +
+                                "    \"name\": \"Alice\",\n" +
+                                "    \"age\": -24,\n" +
+                                "    \"height\": 1.75,\n" +
+                                "    \"eyesColor\": \"Blue\",\n" +
+                                "    \"weight\": 60.5,\n" +
+                                "    \"hairColor\": \"Blonde\",\n" +
+                                "    \"waistline\": 65.0,\n" +
+                                "    \"description\": \"Professional model\",\n" +
+                                "    \"hip\": 90.0,\n" +
+                                "    \"bust\": 85.0\n" +
+                                "}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Alice"))
+                .andExpect(jsonPath("$.age").value(25))
+                .andDo(print());
+    }
+
     // Teste para o endpoint GET (por ID)
     @Test
     public void testGetModelById() throws Exception {
