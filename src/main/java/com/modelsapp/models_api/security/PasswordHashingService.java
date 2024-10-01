@@ -13,7 +13,7 @@ public class PasswordHashingService {
     public String hashPassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
-
+    //TODO REVISAR ESSA FUNCIONALIDADE DE ENVIAR TOKEN E ETC
     // Método para verificar se a senha correnponde ao hash
     public boolean checkPassword(String rawPassword, String hashedPassword) {
         return passwordEncoder.matches(rawPassword, hashedPassword);
