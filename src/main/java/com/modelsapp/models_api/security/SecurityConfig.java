@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.modelsapp.models_api.filter.AuthenticationFilter;
 import com.modelsapp.models_api.filter.LoginFilter;
 import com.modelsapp.models_api.permission.EnumPermission;
-import com.modelsapp.models_api.service.AuthenticatedUserService;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,9 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    @Autowired
-    private AuthenticatedUserService usuarioAutenticadoService;
 
     // Configuração do encoder de senha
     @Bean
@@ -40,7 +36,6 @@ public class SecurityConfig {
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {

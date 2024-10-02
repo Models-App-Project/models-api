@@ -2,18 +2,29 @@ package com.modelsapp.models_api.controller;
 
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.service.ModelService;
-import org.springframework.web.bind.annotation.GetMapping;
+
+import io.github.bucket4j.Bandwidth;
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Refill;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 import java.util.Optional;
+import java.time.Duration;
 import java.util.List;
 
 @RestController
 @RequestMapping("/models")
 public class ModelController {
+
+    private Bandwidth limit = Bandwidth.classic(20, Refill.greedy(20, Duration.ofMinutes(1)));
+    private final Bucket bucket = Bucket.builder()
+            .addLimit(limit)
+            .build();
+
     @Autowired
     private ModelService modelService;
 
@@ -25,7 +36,7 @@ public class ModelController {
     }
 
     // Endpoint para buscar uma modelo por ID
-    @GetMapping("/{id}") 
+    @GetMapping("/{id}")
     public ResponseEntity<Model> getModelById(@PathVariable UUID id) {
         Optional<Model> model = modelService.findModelById(id);
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
