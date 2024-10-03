@@ -4,7 +4,9 @@ import com.modelsapp.models_api.model.Model;
 import com.modelsapp.models_api.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.Valid;
 import java.util.UUID;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +22,7 @@ public class ModelService {
     }
 
     // Método para salvar uma nova modelo
-    public Model saveModel(Model model) {
+    public Model saveModel(@Valid @RequestBody Model model) {
         return modelRepository.save(model);
     }
 
