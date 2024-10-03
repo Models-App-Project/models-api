@@ -8,6 +8,7 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,28 +32,41 @@ public class ModelController {
     // Endpoint para cadastrar uma nova modelo
     @PostMapping("/add")
     public ResponseEntity<Model> addModel(@RequestBody Model model) {
-        Model savedModel = modelService.saveModel(model);
-        return ResponseEntity.ok(savedModel);
+        if (bucket.tryConsume(1)) {
+            Model savedModel = modelService.saveModel(model);
+            return ResponseEntity.ok(savedModel);
+        }
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     // Endpoint para buscar uma modelo por ID
     @GetMapping("/{id}")
     public ResponseEntity<Model> getModelById(@PathVariable UUID id) {
-        Optional<Model> model = modelService.findModelById(id);
-        return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (bucket.tryConsume(1)) {
+            Optional<Model> model = modelService.findModelById(id);
+            return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        }
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     // Endpoint para buscar todas as modelos
     @GetMapping("/findAll")
     public ResponseEntity<List<Model>> getAllModels() {
-        List<Model> models = modelService.findAllModels();
-        return ResponseEntity.ok(models);
+        if (bucket.tryConsume(1)) {
+            List<Model> models = modelService.findAllModels();
+            return ResponseEntity.ok(models);
+        }
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+
     }
 
     // Endpoint para buscar uma modelo por nome
     @GetMapping("/findByName")
     public ResponseEntity<Model> getModelByName(@RequestParam String name) {
-        Optional<Model> model = modelService.findModelByName(name);
-        return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (bucket.tryConsume(1)) {
+            Optional<Model> model = modelService.findModelByName(name);
+            return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        }
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 }
