@@ -1,6 +1,6 @@
 package com.modelsapp.models_api.repository;
 
-import com.modelsapp.models_api.model.Model;
+import com.modelsapp.models_api.entity.Model;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;

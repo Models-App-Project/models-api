@@ -1,4 +1,4 @@
-package com.modelsapp.models_api.model;
+package com.modelsapp.models_api.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
