@@ -17,6 +17,13 @@ public class ModelController {
     @Autowired
     private ModelService modelService;
 
+    // Endpoint para buscar todas as modelos
+    @GetMapping("/findAll")
+    public ResponseEntity<List<Model>> getAllModels() {
+        List<Model> models = modelService.findAllModels();
+        return ResponseEntity.ok(models);
+    }
+
     // Endpoint para cadastrar uma nova modelo
     @PostMapping("/add")
     public ResponseEntity<Model> addModel(@RequestBody Model model) {
@@ -31,17 +38,24 @@ public class ModelController {
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Endpoint para buscar todas as modelos
-    @GetMapping("/findAll")
-    public ResponseEntity<List<Model>> getAllModels() {
-        List<Model> models = modelService.findAllModels();
-        return ResponseEntity.ok(models);
-    }
-
     // Endpoint para buscar uma modelo por nome
     @GetMapping("/findByName")
     public ResponseEntity<Model> getModelByName(@RequestParam String name) {
         Optional<Model> model = modelService.findModelByName(name);
         return model.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Endpoint para deletar uma modelo por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteModelById(@PathVariable UUID id) {
+        modelService.deleteModelById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Endpoint para deletar uma modelo por nome
+    @DeleteMapping("/deleteByName")
+    public ResponseEntity<Void> deleteModelByName(@RequestParam String name) {
+        modelService.deleteModelByName(name);
+        return ResponseEntity.noContent().build();
     }
 }
