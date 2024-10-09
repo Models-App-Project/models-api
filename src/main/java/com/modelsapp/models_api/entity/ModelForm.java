@@ -1,4 +1,4 @@
-package com.modelsapp.models_api.entity;
+package com.modelsapp.models_api.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Model {
+public class ModelForm {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -60,5 +60,4 @@ public class Model {
     @NotNull
     @Min(value=0,message="Digite uma valor valido, nao pode ser menor que 0")
     private double bust;
-
 }
