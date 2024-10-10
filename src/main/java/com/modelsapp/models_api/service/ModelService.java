@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.List;
 import java.util.Optional;
@@ -63,5 +64,21 @@ public class ModelService {
                     return modelRepository.save(existingModel);
                 })
                 .orElse(null);
+    }
+
+    //Recebe como parâmetro uma instância da classe modelo, cujo os atributos que estão preenchidos são os filtros que o usuário deseja aplicar.
+    public List<Model> findModelsByFilters(Model modelToFind) {
+        return modelRepository.findAll().stream()
+                .filter(model -> (modelToFind.getName() == null || model.getName().equals(modelToFind.getName())) &&
+                        (Objects.isNull(modelToFind.getAge()) || model.getAge() == modelToFind.getAge()) &&
+                        (Objects.isNull(modelToFind.getDescription()) || model.getDescription().equals(modelToFind.getDescription())) &&
+                        (Objects.isNull(modelToFind.getEyesColor()) || model.getEyesColor().equals(modelToFind.getEyesColor())) &&
+                        (Objects.isNull(modelToFind.getHairColor()) || model.getHairColor().equals(modelToFind.getHairColor())) &&
+                        (Objects.isNull(modelToFind.getHeight()) || model.getHeight() == modelToFind.getHeight()) &&
+                        (Objects.isNull(modelToFind.getWeight()) || model.getWeight() == modelToFind.getWeight()) &&
+                        (Objects.isNull(modelToFind.getWaistline()) || model.getWaistline() == modelToFind.getWaistline()) &&
+                        (Objects.isNull(modelToFind.getHip()) || model.getHip() == modelToFind.getHip()) &&
+                        (Objects.isNull(modelToFind.getBust()) || model.getBust() == modelToFind.getBust()))
+                .toList();
     }
 }

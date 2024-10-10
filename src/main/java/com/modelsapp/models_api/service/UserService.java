@@ -15,6 +15,7 @@ import com.modelsapp.models_api.repository.IRoleRepository;
 import com.modelsapp.models_api.repository.IUserRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -71,12 +72,36 @@ public class UserService {
         return this.iUserRepository.findAll();
     }
 
-    public boolean isUserLoggedIn() {
+    public User getloggedInUser() throws UserException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return false;
+            throw new UserException("Usuário não encontrado ou não está logado.");
         }
         Object principal = authentication.getPrincipal();
-        return principal instanceof UserDetails;
+        if (principal instanceof UserDetails) {
+            String username = ((UserDetails) principal).getUsername();
+            return iUserRepository.findByUsername(username)
+                    .orElseThrow(() -> new UserException("Usuário não encontrado"));
+        } else {
+            throw new UserException("Usuário não encontrado ou não está logado");
+        }
     }
+
+    public boolean isUserLoggedIn(Role roleFilter) {
+        try {
+            User userIsLoged = this.getloggedInUser();
+            if(Objects.isNull(roleFilter)) {
+                return true;
+            }
+            else if (userIsLoged.getRoles().contains(roleFilter)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
 }
