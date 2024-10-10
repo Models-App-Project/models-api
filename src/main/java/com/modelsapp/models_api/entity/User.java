@@ -1,9 +1,8 @@
 package com.modelsapp.models_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -14,6 +13,8 @@ import java.util.List;
 @Data
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
 
     @Serial
@@ -22,9 +23,14 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @Column(unique = true, length = 50)
+    @NonNull
     private String username;
+
     @Column(length = 150)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NonNull
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

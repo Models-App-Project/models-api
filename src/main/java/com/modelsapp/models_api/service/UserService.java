@@ -1,6 +1,10 @@
 package com.modelsapp.models_api.service;
 
+import com.modelsapp.models_api.Execptions.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +53,30 @@ public class UserService {
         return this.iUserRepository.save(usuario);
     }
 
+    public List<User> getUsersByRoles(String role) throws UserException {
+         Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(role);
+
+         if(filtredByRoleUsers.isPresent()) {
+             return filtredByRoleUsers.get();
+         } else {
+            throw new UserException("Não foi encontrado nenhum usuário com o papel " + role);
+         }
+    }
+
     public void excluirUsuario(User usuario) {
         this.iUserRepository.deleteById(usuario.getId());
     }
 
     public List<User> obterUsuarios() {
         return this.iUserRepository.findAll();
+    }
+
+    public boolean isUserLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+        Object principal = authentication.getPrincipal();
+        return principal instanceof UserDetails;
     }
 }
