@@ -54,7 +54,7 @@ public class UserService {
         return this.iUserRepository.save(usuario);
     }
 
-    public List<User> getUsersByRoles(String role) throws UserException {
+    public List<User> getUsersByRole(String role) throws UserException {
          Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(role);
 
          if(filtredByRoleUsers.isPresent()) {
@@ -87,13 +87,13 @@ public class UserService {
         }
     }
 
-    public boolean isUserLoggedIn(Role roleFilter) {
+    public boolean isUserLoggedIn(List<Role> rolesFilter) {
         try {
             User userIsLoged = this.getloggedInUser();
-            if(Objects.isNull(roleFilter)) {
+            if(Objects.isNull(rolesFilter)) {
                 return true;
             }
-            else if (userIsLoged.getRoles().contains(roleFilter)) {
+            else if (userIsLoged.getRoles().equals(rolesFilter)) {
                 return true;
             } else {
                 return false;

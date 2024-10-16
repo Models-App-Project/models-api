@@ -3,14 +3,16 @@ package com.modelsapp.models_api.service;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.List;
 import java.util.Optional;
+
+
 
 @Service
 public class ModelService {
@@ -68,17 +70,7 @@ public class ModelService {
 
     //Recebe como parâmetro uma instância da classe modelo, cujo os atributos que estão preenchidos são os filtros que o usuário deseja aplicar.
     public List<Model> findModelsByFilters(Model modelToFind) {
-        return modelRepository.findAll().stream()
-                .filter(model -> (modelToFind.getName() == null || model.getName().equals(modelToFind.getName())) &&
-                        (Objects.isNull(modelToFind.getAge()) || model.getAge() == modelToFind.getAge()) &&
-                        (Objects.isNull(modelToFind.getDescription()) || model.getDescription().equals(modelToFind.getDescription())) &&
-                        (Objects.isNull(modelToFind.getEyesColor()) || model.getEyesColor().equals(modelToFind.getEyesColor())) &&
-                        (Objects.isNull(modelToFind.getHairColor()) || model.getHairColor().equals(modelToFind.getHairColor())) &&
-                        (Objects.isNull(modelToFind.getHeight()) || model.getHeight() == modelToFind.getHeight()) &&
-                        (Objects.isNull(modelToFind.getWeight()) || model.getWeight() == modelToFind.getWeight()) &&
-                        (Objects.isNull(modelToFind.getWaistline()) || model.getWaistline() == modelToFind.getWaistline()) &&
-                        (Objects.isNull(modelToFind.getHip()) || model.getHip() == modelToFind.getHip()) &&
-                        (Objects.isNull(modelToFind.getBust()) || model.getBust() == modelToFind.getBust()))
-                .toList();
+        Specification<Model> spec = Specification.where(ModelRepository.hasModel(modelToFind));
+        return modelRepository.findAll(spec);
     }
 }
