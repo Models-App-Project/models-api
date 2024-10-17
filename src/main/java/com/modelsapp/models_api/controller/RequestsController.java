@@ -24,7 +24,7 @@ public class RequestsController {
     public ResponseEntity<List<Requests>> getAllRequests() {
         try {
             List<Requests> requests = requestsServices.findAllRequests();
-            return ResponseEntity.ok(requests);
+            return new ResponseEntity<>(requests, HttpStatus.OK);
         } catch (RequestNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
@@ -37,7 +37,7 @@ public class RequestsController {
     public ResponseEntity<List<Requests>> getRequestsByFilter(@RequestBody Model model, LocalDateTime startDate, LocalDateTime endDate, String status) {
         try {
             List<Requests> requests = requestsServices.findRequestsByFilter(model, startDate, endDate, status);
-            return ResponseEntity.ok(requests);
+            return new ResponseEntity<>(requests, HttpStatus.OK);
         } catch (RequestNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
@@ -49,8 +49,8 @@ public class RequestsController {
     @GetMapping("/getRequestById")
     public ResponseEntity<Requests> getRequestById(@RequestBody UUID requestID) {
         try {
-            Requests request = requestsServices.findRequestBYId(requestID);
-            return ResponseEntity.ok(request);
+            Requests request = requestsServices.findRequestById(requestID);
+            return new ResponseEntity<>(request, HttpStatus.OK);
         } catch (RequestNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
@@ -62,7 +62,7 @@ public class RequestsController {
     public ResponseEntity<Model> getModelDetailsRequest(@RequestBody Requests request) {
         try {
             Model model = requestsServices.getModelRequestDetails(request);
-            return ResponseEntity.ok(model);
+            return new ResponseEntity<>(model, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -72,7 +72,7 @@ public class RequestsController {
     public ResponseEntity<Requests> saveRequest(@RequestBody Requests request) {
         try {
             Requests savedRequest = requestsServices.saveRequest(request);
-            return ResponseEntity.ok(savedRequest);
+            return new ResponseEntity(savedRequest, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -82,7 +82,7 @@ public class RequestsController {
     public ResponseEntity<Requests> updateRequest(@RequestBody UUID requestID, Requests request) {
         try {
             Requests updatedRequest = requestsServices.updateRequest(requestID, request);
-            return ResponseEntity.ok(updatedRequest);
+            return new ResponseEntity<>(updatedRequest, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -92,7 +92,7 @@ public class RequestsController {
     public ResponseEntity<String> deleteRequest(@RequestBody UUID requestID) {
         try {
             requestsServices.deleteRequestById(requestID);
-            return ResponseEntity.ok("Requisição deletada");
+            return new ResponseEntity<>("Requisição deletada", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao deletar a requisição. Tente novamente mais tarde.");
         }
@@ -102,7 +102,7 @@ public class RequestsController {
     public ResponseEntity<String> deleteAllRequests() {
         try {
             requestsServices.deleteAllRequests();
-            return ResponseEntity.ok("Todas as requisições foram deletadas");
+            return new ResponseEntity<>("Todas as requisições foram deletadas", HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno ao deletar as requisições. Tente novamente mais tarde.");
         }

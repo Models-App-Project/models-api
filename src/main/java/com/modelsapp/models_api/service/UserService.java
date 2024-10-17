@@ -1,6 +1,7 @@
 package com.modelsapp.models_api.service;
 
 import com.modelsapp.models_api.Execptions.UserException;
+import com.modelsapp.models_api.permission.EnumPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,7 +55,7 @@ public class UserService {
         return this.iUserRepository.save(usuario);
     }
 
-    public List<User> getUsersByRole(String role) throws UserException {
+    public List<User> getUsersByRole(EnumPermission role) throws UserException {
          Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(role);
 
          if(filtredByRoleUsers.isPresent()) {

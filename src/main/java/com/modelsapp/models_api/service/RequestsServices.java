@@ -59,22 +59,24 @@ public class RequestsServices {
             if(requestsToFilter.isEmpty()) {
                 throw new RequestNotFoundException("Nenhuma requisição encontrada");
             } else {
-                requestsToFilter = requestsToFilter.stream().filter(request -> request.getModel().equals(model)).toList();
-                if(requestsToFilter.isEmpty()) {
-                    throw new RequestNotFoundException("Nenhuma requisição encontrada");
-                } else {
+                if(model == null) {
                     return requestsToFilter;
+                } else {
+                    requestsToFilter = requestsToFilter.stream().filter(request -> request.getModel().equals(model)).toList();
+                    if(requestsToFilter.isEmpty()) {
+                        throw new RequestNotFoundException("Nenhuma requisição encontrada");
+                    } else {
+                        return requestsToFilter;
+                    }
                 }
             }
         } catch (Exception e) {
             throw new Exception("Ocorreu um erro inesperado:" + e);
         }
-
-
     }
 
 
-    public Requests findRequestBYId(UUID requestID) throws RequestNotFoundException, Exception {
+    public Requests findRequestById(UUID requestID) throws RequestNotFoundException, Exception {
 
         try {
             Optional<Requests> request = requestsRepository.findRequestById(requestID);
@@ -87,8 +89,6 @@ public class RequestsServices {
         } catch (Exception e) {
             throw new Exception("Ocorreu um erro inesperado:" + e);
         }
-
-
     }
 
     public Model getModelRequestDetails(Requests request) throws Exception {
