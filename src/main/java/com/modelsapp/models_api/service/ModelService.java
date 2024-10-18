@@ -1,8 +1,9 @@
 package com.modelsapp.models_api.service;
 
-import com.modelsapp.models_api.model.Model;
+import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -10,6 +11,8 @@ import javax.validation.Valid;
 import java.util.UUID;
 import java.util.List;
 import java.util.Optional;
+
+
 
 @Service
 public class ModelService {
@@ -63,5 +66,11 @@ public class ModelService {
                     return modelRepository.save(existingModel);
                 })
                 .orElse(null);
+    }
+
+    //Recebe como parâmetro uma instância da classe modelo, cujo os atributos que estão preenchidos são os filtros que o usuário deseja aplicar.
+    public List<Model> findModelsByFilters(Model modelToFind) {
+        Specification<Model> spec = Specification.where(ModelRepository.hasModel(modelToFind));
+        return modelRepository.findAll(spec);
     }
 }

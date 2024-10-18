@@ -1,8 +1,9 @@
 package com.modelsapp.models_api.ModelTests;
 
 import com.modelsapp.models_api.controller.ModelController;
-import com.modelsapp.models_api.model.Model;
+import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.service.ModelService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

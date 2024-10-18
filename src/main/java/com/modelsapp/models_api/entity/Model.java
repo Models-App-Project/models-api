@@ -1,9 +1,6 @@
-package com.modelsapp.models_api.model;
+package com.modelsapp.models_api.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +10,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -60,5 +58,10 @@ public class Model {
     @NotNull
     @Min(value=0,message="Digite uma valor valido, nao pode ser menor que 0")
     private double bust;
+
+    @OneToMany(mappedBy = "model", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Requests> requests;
+
+
 
 }
