@@ -1,6 +1,6 @@
 package com.modelsapp.models_api.controller;
 
-import com.modelsapp.models_api.model.ModelForm;
+import com.modelsapp.models_api.entity.ModelForm;
 import com.modelsapp.models_api.service.ModelFormService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;

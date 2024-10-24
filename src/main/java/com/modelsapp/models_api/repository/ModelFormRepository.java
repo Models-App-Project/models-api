@@ -1,6 +1,6 @@
 package com.modelsapp.models_api.repository;
 
-import com.modelsapp.models_api.model.ModelForm;
+import com.modelsapp.models_api.entity.ModelForm;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
