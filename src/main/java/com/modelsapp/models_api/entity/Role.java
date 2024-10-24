@@ -14,8 +14,6 @@ import java.util.List;
 @Entity
 @Table(name = "roles")
 @Data
-@Getter
-@Setter
 public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
