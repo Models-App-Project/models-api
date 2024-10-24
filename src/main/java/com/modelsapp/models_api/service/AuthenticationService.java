@@ -53,6 +53,7 @@ public class AuthenticationService {
                     .getBody();
             if (user != null) {
 
+                @SuppressWarnings("unchecked")
                 List<SimpleGrantedAuthority> permissoes = ((ArrayList<String>) user.get(AUTHORITIES))
                         .stream()
                         .map(SimpleGrantedAuthority::new)

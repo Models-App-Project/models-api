@@ -20,6 +20,7 @@ public class RequestsServices {
 
     @Autowired
     private RequestsRepository requestsRepository;
+    @SuppressWarnings("unused")
     @Autowired
     private ModelService modelService;
 
