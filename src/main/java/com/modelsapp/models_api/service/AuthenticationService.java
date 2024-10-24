@@ -31,6 +31,7 @@ public class AuthenticationService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
 
+        @SuppressWarnings("deprecation")
         String jwtToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TOKEN_ONE_HOUR))
@@ -45,12 +46,13 @@ public class AuthenticationService {
         String token = request.getHeader(HEADER_AUTHORIZATION);
 
         if (token != null) {
+            @SuppressWarnings("deprecation")
             Claims user = Jwts.parser()
                     .setSigningKey(JWT_KEY)
                     .parseClaimsJws(token.replace(BEARER + " ", ""))
                     .getBody();
             if (user != null) {
-                
+
                 List<SimpleGrantedAuthority> permissoes = ((ArrayList<String>) user.get(AUTHORITIES))
                         .stream()
                         .map(SimpleGrantedAuthority::new)
@@ -63,4 +65,5 @@ public class AuthenticationService {
         }
         return null;
     }
+
 }
