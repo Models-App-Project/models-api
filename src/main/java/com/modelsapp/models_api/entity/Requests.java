@@ -8,11 +8,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "requests")
-@Data
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 
 public class Requests {
     @Id
@@ -31,5 +26,47 @@ public class Requests {
     @JoinColumn(name = "model_id", nullable = false)
     @NonNull
     private Model model;
+
+    public Requests(UUID id, @NonNull String status, @NonNull LocalDateTime requestDate, @NonNull Model model) {
+        this.id = id;
+        this.status = status;
+        this.requestDate = requestDate;
+        this.model = model;
+    }
+
+    public Requests() {
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(LocalDateTime requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
+    }
 
 }

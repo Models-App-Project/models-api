@@ -14,10 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Model {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,6 +57,128 @@ public class Model {
 
     @OneToMany(mappedBy = "model", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Requests> requests;
+
+    public Model(UUID id, @NotNull String name,
+            @NotNull @Min(value = 0, message = "Digite uma idade valida, nao pode ser menor que 0") @Max(value = 120, message = "Digite uma idade valida") int age,
+            String description, @NotNull String eyesColor, @NotNull String hairColor,
+            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double height,
+            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double weight,
+            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double waistline,
+            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double hip,
+            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double bust,
+            List<Requests> requests) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.description = description;
+        this.eyesColor = eyesColor;
+        this.hairColor = hairColor;
+        this.height = height;
+        this.weight = weight;
+        this.waistline = waistline;
+        this.hip = hip;
+        this.bust = bust;
+        this.requests = requests;
+    }
+
+    public Model() {
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getEyesColor() {
+        return eyesColor;
+    }
+
+    public void setEyesColor(String eyesColor) {
+        this.eyesColor = eyesColor;
+    }
+
+    public String getHairColor() {
+        return hairColor;
+    }
+
+    public void setHairColor(String hairColor) {
+        this.hairColor = hairColor;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
+    public double getWaistline() {
+        return waistline;
+    }
+
+    public void setWaistline(double waistline) {
+        this.waistline = waistline;
+    }
+
+    public double getHip() {
+        return hip;
+    }
+
+    public void setHip(double hip) {
+        this.hip = hip;
+    }
+
+    public double getBust() {
+        return bust;
+    }
+
+    public void setBust(double bust) {
+        this.bust = bust;
+    }
+
+    public List<Requests> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<Requests> requests) {
+        this.requests = requests;
+    }
 
 
 
