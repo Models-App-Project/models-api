@@ -72,7 +72,7 @@ public class RequestsController {
     public ResponseEntity<Requests> saveRequest(@RequestBody Requests request) {
         try {
             Requests savedRequest = requestsServices.saveRequest(request);
-            return new ResponseEntity(savedRequest, HttpStatus.CREATED);
+            return new ResponseEntity<Requests>(savedRequest, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
