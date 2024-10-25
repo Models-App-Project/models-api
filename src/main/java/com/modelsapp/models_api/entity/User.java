@@ -64,4 +64,13 @@ public class User implements Serializable {
     public void setRoles(List<Role> list) {
         this.roles = list;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }
