@@ -20,6 +20,9 @@ public class ModelForm {
     private String name;
 
     @NotNull
+    private String email;
+
+    @NotNull
     @Min(value=0,message="Digite uma idade valida, nao pode ser menor que 0")
     @Max(value=120,message="Digite uma idade valida")
     private int age;
@@ -55,7 +58,7 @@ public class ModelForm {
     public ModelForm() {
     }
 
-    public ModelForm(UUID id, @NotNull String name,
+    public ModelForm(UUID id, @NotNull String name, @NotNull String email,
             @NotNull @Min(value = 0, message = "Digite uma idade valida, nao pode ser menor que 0") @Max(value = 120, message = "Digite uma idade valida") int age,
             String description, @NotNull String eyesColor, @NotNull String hairColor,
             @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double height,
@@ -65,6 +68,7 @@ public class ModelForm {
             @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double bust) {
         this.id = id;
         this.name = name;
+        this.email = email;
         this.age = age;
         this.description = description;
         this.eyesColor = eyesColor;
@@ -74,6 +78,14 @@ public class ModelForm {
         this.waistline = waistline;
         this.hip = hip;
         this.bust = bust;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public UUID getId() {

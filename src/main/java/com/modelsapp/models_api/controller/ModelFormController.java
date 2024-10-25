@@ -1,8 +1,9 @@
 package com.modelsapp.models_api.controller;
 
 import com.modelsapp.models_api.entity.ModelForm;
+import com.modelsapp.models_api.service.EmailService;
 import com.modelsapp.models_api.service.ModelFormService;
-import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,21 @@ public class ModelFormController {
     @PostMapping("/sendForm")
     public ResponseEntity<ModelForm> sendModelForm(@RequestBody ModelForm model) {
         Optional<ModelForm> savedModelForm = modelFormService.saveModelForm(model);
-        return savedModelForm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
+        if (savedModelForm.isPresent()) {
+            ModelForm form = savedModelForm.get();
+
+            String assunto = "Confirmação de envio de formulário";
+            String mensagem = "Seu formulário foi enviado com sucesso!\n\nObrigado por entrar em contato. Em breve retornaremos. \n\nAtenciosamente, \nEquipe ModelsApp";
+
+            // Enviar email para o usuário
+            EmailService.enviarEmailConfirmacao(form.getEmail(), assunto, mensagem);
+
+            return savedModelForm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     // Endpoint para buscar todos os formulários das modelos
