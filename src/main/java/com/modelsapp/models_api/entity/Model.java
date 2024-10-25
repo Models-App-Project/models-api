@@ -83,13 +83,6 @@ public class Model {
     public Model() {
     }
 
-    public List<Requests> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(List<Requests> requests) {
-        this.requests = requests;
-    }
 
 
 
