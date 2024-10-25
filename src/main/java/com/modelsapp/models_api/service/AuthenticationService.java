@@ -39,6 +39,7 @@ public class AuthenticationService {
                 .addClaims(claims)
                 .compact();
         response.addHeader(HEADER_AUTHORIZATION, BEARER + " " + jwtToken);
+        System.out.println("AQUI A CHAVE JUMENTO"+BEARER + " " + jwtToken);
         response.addHeader("Access-Control-Expode-Headers", HEADER_AUTHORIZATION);
     }
 
