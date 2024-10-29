@@ -3,6 +3,8 @@ package com.modelsapp.models_api.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Model {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -57,31 +61,7 @@ public class Model {
     @OneToMany(mappedBy = "model", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Requests> requests;
 
-    public Model(UUID id, @NotNull String name,
-            @NotNull @Min(value = 0, message = "Digite uma idade valida, nao pode ser menor que 0") @Max(value = 120, message = "Digite uma idade valida") int age,
-            String description, @NotNull String eyesColor, @NotNull String hairColor,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double height,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double weight,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double waistline,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double hip,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double bust,
-            List<Requests> requests) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.description = description;
-        this.eyesColor = eyesColor;
-        this.hairColor = hairColor;
-        this.height = height;
-        this.weight = weight;
-        this.waistline = waistline;
-        this.hip = hip;
-        this.bust = bust;
-        this.requests = requests;
-    }
 
-    public Model() {
-    }
 
 
 

@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;
@@ -15,6 +17,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ModelForm {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -59,30 +63,7 @@ public class ModelForm {
     @Min(value=0,message="Digite uma valor valido, nao pode ser menor que 0")
     private double bust;
 
-    public ModelForm() {
-    }
 
-    public ModelForm(UUID id, @NotNull String name, @NotNull String email,
-            @NotNull @Min(value = 0, message = "Digite uma idade valida, nao pode ser menor que 0") @Max(value = 120, message = "Digite uma idade valida") int age,
-            String description, @NotNull String eyesColor, @NotNull String hairColor,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double height,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double weight,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double waistline,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double hip,
-            @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double bust) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.age = age;
-        this.description = description;
-        this.eyesColor = eyesColor;
-        this.hairColor = hairColor;
-        this.height = height;
-        this.weight = weight;
-        this.waistline = waistline;
-        this.hip = hip;
-        this.bust = bust;
-    }
 
  
 }

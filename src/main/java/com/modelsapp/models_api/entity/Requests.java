@@ -1,7 +1,12 @@
 package com.modelsapp.models_api.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.NonNull;
+
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -10,6 +15,8 @@ import java.util.UUID;
 @Table(name = "requests")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Requests {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -28,15 +35,7 @@ public class Requests {
     @NonNull
     private Model model;
 
-    public Requests(UUID id, @NonNull String status, @NonNull LocalDateTime requestDate, @NonNull Model model) {
-        this.id = id;
-        this.status = status;
-        this.requestDate = requestDate;
-        this.model = model;
-    }
 
-    public Requests() {
-    }
 
 
 }

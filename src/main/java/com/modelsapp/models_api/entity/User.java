@@ -3,9 +3,7 @@ package com.modelsapp.models_api.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NonNull;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,6 +13,8 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
 
     @Serial

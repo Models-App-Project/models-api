@@ -1,25 +1,18 @@
 package com.modelsapp.models_api.fileStorageProperties;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "file")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class FileStorageProperties {
     private String uploadDir;
-
-    public FileStorageProperties(String uploadDir) {
-        this.uploadDir = uploadDir;
-    }
-
-    public FileStorageProperties() {
-    }
-
-    public String getUploadDir() {
-        return uploadDir;
-    }
-
-    public void setUploadDir(String uploadDir) {
-        this.uploadDir = uploadDir;
-    }
 }
