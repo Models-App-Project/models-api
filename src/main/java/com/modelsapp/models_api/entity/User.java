@@ -38,32 +38,4 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"),
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
     private List<Role> roles;
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public Optional<User> getRoles() {
-        return Optional.ofNullable(this);
-    }
-
-    public EnumPermission getName() {
-        return this.getName();
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(String encode) {
-        this.password = encode;
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setRoles(List<Role> list) {
-        this.roles = list;
-    }
 }
