@@ -8,7 +8,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "requests")
-
+@Getter
+@Setter
 public class Requests {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -37,36 +38,5 @@ public class Requests {
     public Requests() {
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getRequestDate() {
-        return requestDate;
-    }
-
-    public void setRequestDate(LocalDateTime requestDate) {
-        this.requestDate = requestDate;
-    }
-
-    public Model getModel() {
-        return model;
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
-    }
 
 }

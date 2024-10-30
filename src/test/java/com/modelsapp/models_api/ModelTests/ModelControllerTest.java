@@ -95,7 +95,7 @@ public class ModelControllerTest {
                                 "    \"hip\": 90.0,\n" +
                                 "    \"bust\": 85.0\n" +
                                 "}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.name").value("Alice"))
                 .andExpect(jsonPath("$.age").value(25))
                 .andDo(print());

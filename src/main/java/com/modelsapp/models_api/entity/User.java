@@ -1,18 +1,20 @@
 package com.modelsapp.models_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.modelsapp.models_api.permission.EnumPermission;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NonNull;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User implements Serializable {
 
     @Serial
@@ -64,13 +66,4 @@ public class User implements Serializable {
     public void setRoles(List<Role> list) {
         this.roles = list;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
 }

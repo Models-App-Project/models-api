@@ -1,6 +1,8 @@
 package com.modelsapp.models_api.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;
@@ -9,6 +11,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 public class Model {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -79,101 +83,6 @@ public class Model {
     public Model() {
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getEyesColor() {
-        return eyesColor;
-    }
-
-    public void setEyesColor(String eyesColor) {
-        this.eyesColor = eyesColor;
-    }
-
-    public String getHairColor() {
-        return hairColor;
-    }
-
-    public void setHairColor(String hairColor) {
-        this.hairColor = hairColor;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public double getWaistline() {
-        return waistline;
-    }
-
-    public void setWaistline(double waistline) {
-        this.waistline = waistline;
-    }
-
-    public double getHip() {
-        return hip;
-    }
-
-    public void setHip(double hip) {
-        this.hip = hip;
-    }
-
-    public double getBust() {
-        return bust;
-    }
-
-    public void setBust(double bust) {
-        this.bust = bust;
-    }
-
-    public List<Requests> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(List<Requests> requests) {
-        this.requests = requests;
-    }
 
 
 

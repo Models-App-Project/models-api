@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;
@@ -11,6 +13,8 @@ import javax.validation.constraints.Min;
 import java.util.UUID;
 
 @Entity
+@Getter
+@Setter
 public class ModelForm {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,6 +22,9 @@ public class ModelForm {
 
     @NotNull
     private String name;
+
+    @NotNull
+    private String email;
 
     @NotNull
     @Min(value=0,message="Digite uma idade valida, nao pode ser menor que 0")
@@ -55,7 +62,7 @@ public class ModelForm {
     public ModelForm() {
     }
 
-    public ModelForm(UUID id, @NotNull String name,
+    public ModelForm(UUID id, @NotNull String name, @NotNull String email,
             @NotNull @Min(value = 0, message = "Digite uma idade valida, nao pode ser menor que 0") @Max(value = 120, message = "Digite uma idade valida") int age,
             String description, @NotNull String eyesColor, @NotNull String hairColor,
             @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double height,
@@ -65,6 +72,7 @@ public class ModelForm {
             @NotNull @Min(value = 0, message = "Digite uma valor valido, nao pode ser menor que 0") double bust) {
         this.id = id;
         this.name = name;
+        this.email = email;
         this.age = age;
         this.description = description;
         this.eyesColor = eyesColor;
@@ -76,91 +84,5 @@ public class ModelForm {
         this.bust = bust;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getEyesColor() {
-        return eyesColor;
-    }
-
-    public void setEyesColor(String eyesColor) {
-        this.eyesColor = eyesColor;
-    }
-
-    public String getHairColor() {
-        return hairColor;
-    }
-
-    public void setHairColor(String hairColor) {
-        this.hairColor = hairColor;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public double getWaistline() {
-        return waistline;
-    }
-
-    public void setWaistline(double waistline) {
-        this.waistline = waistline;
-    }
-
-    public double getHip() {
-        return hip;
-    }
-
-    public void setHip(double hip) {
-        this.hip = hip;
-    }
-
-    public double getBust() {
-        return bust;
-    }
-
-    public void setBust(double bust) {
-        this.bust = bust;
-    }
+ 
 }
