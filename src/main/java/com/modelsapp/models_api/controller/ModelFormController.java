@@ -6,6 +6,7 @@ import com.modelsapp.models_api.service.ModelFormService;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
@@ -20,6 +21,7 @@ public class ModelFormController {
 
     // Endpoint para enviar um formulário da modelo
     @PostMapping("/sendForm")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<ModelForm> sendModelForm(@RequestBody ModelForm model) {
         Optional<ModelForm> savedModelForm = modelFormService.saveModelForm(model);
 
@@ -62,6 +64,7 @@ public class ModelFormController {
 
     // Endpoint para deletar um formulário da modelo por ID
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<Void> deleteModelFormById(@PathVariable UUID id) {
         modelFormService.deleteModelFormById(id);
         return ResponseEntity.noContent().build();
@@ -69,6 +72,7 @@ public class ModelFormController {
 
     // Endpoint para deletar um formulário da modelo por nome
     @DeleteMapping("/deleteByName")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<Void> deleteModelFormByName(@RequestParam String name) {
         modelFormService.deleteModelFormByName(name);
         return ResponseEntity.noContent().build();
