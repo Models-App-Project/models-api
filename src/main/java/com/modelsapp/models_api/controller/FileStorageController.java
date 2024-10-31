@@ -12,6 +12,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +44,7 @@ public class FileStorageController {
 
     // Endpoint para fazer o upload de um arquivo
     @PostMapping("/upload")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         @SuppressWarnings("null")
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -99,6 +101,7 @@ public class FileStorageController {
 
     // Endpoint para deletar um arquivo
     @DeleteMapping("/delete/{fileName:.+}")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
         try {
             Path filePath = fileStorageLocation.resolve(fileName).normalize();

@@ -3,7 +3,7 @@ package com.modelsapp.models_api.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.modelsapp.models_api.entity.User;
@@ -29,6 +29,7 @@ public class UserController {
             .build();
 
     @PostMapping
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString())")
     public ResponseEntity<String> salvarUsuario(@RequestBody User usuario) {
 
         if (bucket.tryConsume(1)) {
@@ -39,6 +40,7 @@ public class UserController {
     }
 
     @PutMapping
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<String> atualizarUsuario(@RequestBody User usuario) {
         if (bucket.tryConsume(1)) {
             User usuariosalvo = userService.salvarUsuario(usuario);
@@ -56,6 +58,7 @@ public class UserController {
     }
 
     @DeleteMapping
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString())")
     public ResponseEntity<String> excluirUsuario(@RequestBody User usuario) {
         if (bucket.tryConsume(1)) {
             userService.excluirUsuario(usuario);

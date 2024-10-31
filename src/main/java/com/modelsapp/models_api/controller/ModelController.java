@@ -10,6 +10,7 @@ import io.github.bucket4j.Refill;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class ModelController {
 
     // Endpoint para cadastrar uma nova modelo
     @PostMapping("/add")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<Model> addModel(@RequestBody Model model) {
         if (bucket.tryConsume(1)) {
             Model savedModel = modelService.saveModel(model);
@@ -72,6 +74,7 @@ public class ModelController {
 
     // Endpoint para deletar uma modelo por ID
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<Void> deleteModelById(@PathVariable UUID id) {
         if (bucket.tryConsume(1)) {
             modelService.deleteModelById(id);
@@ -82,6 +85,7 @@ public class ModelController {
 
     // Endpoint para deletar uma modelo por nome
     @DeleteMapping("/deleteByName")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<Void> deleteModelByName(@RequestParam String name) {
         if (bucket.tryConsume(1)) {
             modelService.deleteModelByName(name);
