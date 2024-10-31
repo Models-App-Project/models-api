@@ -41,14 +41,14 @@ public class SecurityConfig {
         httpSecurity.csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> {
                     // TODO REVISAR AS PERMISSÕES E OS ENDPOINTS
-                    auth.requestMatchers("/users/login").permitAll()
+                    auth.requestMatchers("/login").permitAll()
                             .requestMatchers("/*").hasAuthority(EnumPermission.ADMINISTRADOR.toString())
                             .anyRequest()
                             .authenticated();
                 });
 
         httpSecurity.addFilterBefore(
-                new LoginFilter("/users/login", authenticationConfiguration.getAuthenticationManager()),
+                new LoginFilter("/login", authenticationConfiguration.getAuthenticationManager()),
                 UsernamePasswordAuthenticationFilter.class);
         httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

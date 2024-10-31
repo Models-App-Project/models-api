@@ -20,16 +20,17 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
     private Bandwidth limit = Bandwidth.classic(20, Refill.greedy(20, Duration.ofMinutes(1)));
     private final Bucket bucket = Bucket.builder()
             .addLimit(limit)
             .build();
 
-    @Autowired
-    private UserService userService;
-
     @PostMapping
     public ResponseEntity<String> salvarUsuario(@RequestBody User usuario) {
+
         if (bucket.tryConsume(1)) {
             User usuariosalvo = userService.salvarUsuario(usuario);
             return new ResponseEntity<>("Novo usuário criado " + usuariosalvo.getUsername(), HttpStatus.CREATED);
