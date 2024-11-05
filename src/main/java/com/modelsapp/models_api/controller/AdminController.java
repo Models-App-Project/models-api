@@ -1,8 +1,8 @@
 package com.modelsapp.models_api.controller;
 
 
-import com.modelsapp.models_api.Execptions.ModelException;
-import com.modelsapp.models_api.Execptions.UserException;
+import com.modelsapp.models_api.Exceptions.ModelException;
+import com.modelsapp.models_api.Exceptions.UserException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.User;
 import com.modelsapp.models_api.service.AdminServices;
