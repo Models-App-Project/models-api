@@ -1,8 +1,10 @@
 package com.modelsapp.models_api.controller;
 
-import com.modelsapp.models_api.Execptions.RequestNotFoundException;
+import com.modelsapp.models_api.Exceptions.RequestException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.Requests;
+import com.modelsapp.models_api.service.ModelService;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import com.modelsapp.models_api.service.RequestsServices;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -20,12 +23,15 @@ public class RequestsController {
     @Autowired
     private RequestsServices requestsServices;
 
+    @Autowired
+    private ModelService modelService;
+
     @GetMapping("/getAllRequests")
     public ResponseEntity<List<Requests>> getAllRequests() {
         try {
             List<Requests> requests = requestsServices.findAllRequests();
             return new ResponseEntity<>(requests, HttpStatus.OK);
-        } catch (RequestNotFoundException e) {
+        } catch (RequestException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -38,7 +44,7 @@ public class RequestsController {
         try {
             List<Requests> requests = requestsServices.findRequestsByFilter(model, startDate, endDate, status);
             return new ResponseEntity<>(requests, HttpStatus.OK);
-        } catch (RequestNotFoundException e) {
+        } catch (RequestException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -51,7 +57,7 @@ public class RequestsController {
         try {
             Requests request = requestsServices.findRequestById(requestID);
             return new ResponseEntity<>(request, HttpStatus.OK);
-        } catch (RequestNotFoundException e) {
+        } catch (RequestException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -59,10 +65,15 @@ public class RequestsController {
     }
 
     @GetMapping("/getModelRequest")
-    public ResponseEntity<Model> getModelDetailsRequest(@RequestBody Requests request) {
+    public ResponseEntity<Map< Model , List<JSONObject>>> getModelDetailsRequest(@RequestBody Requests request) {
         try {
             Model model = requestsServices.getModelRequestDetails(request);
-            return new ResponseEntity<>(model, HttpStatus.OK);
+            JSONObject modelDetails = new JSONObject();
+            if(model.getPhotos().size() > 0) {
+                modelDetails = modelService.findModelPhotos(model.getPhotos(), model.getId());
+            }
+            Map<Model, List<JSONObject>> modelDetailsMap = Map.of(model, List.of(modelDetails));
+            return new ResponseEntity<>(modelDetailsMap, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
@@ -72,7 +83,7 @@ public class RequestsController {
     public ResponseEntity<Requests> saveRequest(@RequestBody Requests request) {
         try {
             Requests savedRequest = requestsServices.saveRequest(request);
-            return new ResponseEntity<Requests>(savedRequest, HttpStatus.CREATED);
+            return new ResponseEntity<>(savedRequest, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

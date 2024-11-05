@@ -21,7 +21,7 @@ import com.modelsapp.models_api.permission.EnumPermission;
 public class SecurityConfig {
     // Configuração do encoder de senha
 
-    @Autowired
+   @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
@@ -54,4 +54,6 @@ public class SecurityConfig {
 
         return httpSecurity.build();
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.modelsapp.models_api.controller;
 
+import com.modelsapp.models_api.Exceptions.ModelException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.service.ModelService;
 
@@ -72,20 +73,30 @@ public class ModelController {
 
     // Endpoint para deletar uma modelo por ID
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteModelById(@PathVariable UUID id) {
+    public ResponseEntity<String> deleteModelById(@PathVariable UUID id) throws ModelException {
         if (bucket.tryConsume(1)) {
-            modelService.deleteModelById(id);
-            return ResponseEntity.noContent().build();
+            try {
+                modelService.deleteModelById(id);
+                return new ResponseEntity<>("Deleção realizada com sucesso.", HttpStatus.OK);
+            } catch (ModelException e) {
+                return new ResponseEntity<>("Erro ao tentar excluir a modelo.\n" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     // Endpoint para deletar uma modelo por nome
     @DeleteMapping("/deleteByName")
-    public ResponseEntity<Void> deleteModelByName(@RequestParam String name) {
+    public ResponseEntity<String> deleteModelByName(@RequestParam String name) throws ModelException {
         if (bucket.tryConsume(1)) {
-            modelService.deleteModelByName(name);
-            return ResponseEntity.noContent().build();
+            try{
+                modelService.deleteModelByName(name);
+                return new ResponseEntity<>("Deleção realizada com sucesso.", HttpStatus.OK);
+            } catch (ModelException e) {
+                return new ResponseEntity<>("Erro ao tentar excluir a modelo.\n" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }

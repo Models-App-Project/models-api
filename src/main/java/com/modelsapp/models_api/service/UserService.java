@@ -1,6 +1,8 @@
 package com.modelsapp.models_api.service;
 
-import com.modelsapp.models_api.Execptions.UserException;
+
+import com.modelsapp.models_api.Exceptions.UserException;
+import com.modelsapp.models_api.entity.FileStorage;
 import com.modelsapp.models_api.permission.EnumPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -9,15 +11,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import com.modelsapp.models_api.entity.Role;
 import com.modelsapp.models_api.entity.User;
 import com.modelsapp.models_api.repository.IRoleRepository;
 import com.modelsapp.models_api.repository.IUserRepository;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import java.util.*;
 
 @Service
 @Transactional
@@ -28,31 +31,69 @@ public class UserService {
     @Autowired
     private IRoleRepository iRoleRepository;
 
+   @Autowired
+   private PasswordEncoder passwordEncoder;
+
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private FileStorageService fileStorageService;
 
-    public Optional<User> obterUsuarioId(Long usuarioId) {
-        return this.iUserRepository.findById(usuarioId);
+
+
+    private String defaultLocation = "/downloads/users/";
+
+    public Optional<User> obterUsuarioId(UUID usuarioId) {
+        return this.iUserRepository.getUserById(usuarioId);
     }
 
-    public User salvarUsuario(User usuario) {
-        usuario.setRoles(usuario.getRoles()
-                .stream()
-                .map(role -> iRoleRepository.findByName(role.getName()))
-                .toList());
-        // CRIPTOGRAFIA
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        return this.iUserRepository.save(usuario);
+    public User salvarUsuario(User usuario) throws UserException{
+
+
+
+            usuario.setRoles(usuario.getRoles()
+                    .stream()
+                    .map(role -> iRoleRepository.findByName(role.getName()))
+                    .toList());
+            // CRIPTOGRAFIA
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            return this.iUserRepository.save(usuario);
+
+
     }
 
-    public User atualizarUsuario(User usuario) {
-        usuario.setRoles(usuario.getRoles()
-                .stream()
-                .map(role -> iRoleRepository.findByName(role.getName()))
-                .toList());
-        // CRIPTOGRAFIA
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        return this.iUserRepository.save(usuario);
+    public void salvarPhotosUsuario(User usuario, List<MultipartFile> photos) throws UserException {
+        if(photos.size() > 8) {
+            throw new UserException("O número máximo de fotos permitido é 8.");
+        } else {
+            List<FileStorage> photosLocation = savePhotos(photos, usuario);
+            usuario.setPhotos(photosLocation);
+            iUserRepository.save(usuario);
+        }
+    }
+
+    public User atualizarUsuario(User usuario) throws UserException {
+
+            usuario.setRoles(usuario.getRoles()
+                    .stream()
+                    .map(role -> iRoleRepository.findByName(role.getName()))
+                    .toList());
+            // CRIPTOGRAFIA
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+            return this.iUserRepository.save(usuario);
+
+
+    }
+
+    public void atualizarPhotosUsuario(User usuario, List<MultipartFile> photos) throws  UserException {
+        if(photos.size() > 8) {
+            throw new UserException("O número máximo de fotos permitido é 8.");
+        } else {
+            usuario.getPhotos().forEach(fileStorage -> {
+                fileStorageService.deleteFileById(fileStorage.getId());
+            });
+            List<FileStorage> photosLocation = savePhotos(photos, usuario);
+            usuario.setPhotos(photosLocation);
+            iUserRepository.save(usuario);
+        }
     }
 
     public List<User> getUsersByRole(EnumPermission role) throws UserException {
@@ -65,13 +106,26 @@ public class UserService {
          }
     }
 
-    public void excluirUsuario(User usuario) {
-        this.iUserRepository.deleteById(usuario.getId());
+    public JSONObject getUserPhotos (List<FileStorage> fileStorages, UUID userId) throws UserException {
+        JSONObject userPhotos = new JSONObject();
+        JSONArray photos = new JSONArray();
+
+        userPhotos.put("userId", userId);
+
+        photos.add(fileStorageService.getFiles(fileStorages));
+        userPhotos.put("photos", photos);
+
+        return userPhotos;
     }
 
-    public List<User> obterUsuarios() {
-        return this.iUserRepository.findAll();
+    public void excluirUsuario(User usuario) {
+        usuario.getPhotos().forEach(fileStorage -> {
+            fileStorageService.deleteFileById(fileStorage.getId());
+        });
+        this.iUserRepository.deleteUserById(usuario.getId());
     }
+
+    public List<User> obterUsuarios() { return this.iUserRepository.findAll(); }
 
     public User getloggedInUser() throws UserException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -104,5 +158,18 @@ public class UserService {
         }
     }
 
+    private List<FileStorage> savePhotos(List<MultipartFile> photos, User user) {
+        List<FileStorage> photosLocation = new ArrayList<>();
+
+        photos.forEach(photo -> {
+
+            String uploadDir = defaultLocation + user.getUsername() + "/profile/" + photo.getOriginalFilename();
+
+            FileStorage fileStorage = fileStorageService.saveFile(photo, uploadDir, user, null);
+            photosLocation.add(fileStorage);
+        });
+
+        return photosLocation;
+    }
 
 }

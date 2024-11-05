@@ -1,16 +1,14 @@
 package com.modelsapp.models_api.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.UUID;
+
 
 @Entity
 @Getter
@@ -62,7 +60,8 @@ public class Model {
     private List<Requests> requests;
 
 
-
+    @OneToMany(mappedBy = "model", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<FileStorage> photos;
 
 
 
