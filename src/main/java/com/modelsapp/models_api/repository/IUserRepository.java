@@ -7,10 +7,15 @@ import com.modelsapp.models_api.entity.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
     Optional<List<User>> getUsersByRoles(EnumPermission role);
+
+    Optional<User> getUserById(UUID id);
+
+    void deleteUserById(UUID id);
 }
