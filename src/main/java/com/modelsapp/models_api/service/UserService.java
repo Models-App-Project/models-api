@@ -15,7 +15,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import com.modelsapp.models_api.entity.Role;
 import com.modelsapp.models_api.entity.User;
-import com.modelsapp.models_api.repository.IRoleRepository;
 import com.modelsapp.models_api.repository.IUserRepository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +28,7 @@ public class UserService {
     private IUserRepository iUserRepository;
 
     @Autowired
-    private IRoleRepository iRoleRepository;
+    private RoleServices RoleServices;
 
    @Autowired
    private PasswordEncoder passwordEncoder;
@@ -51,7 +50,7 @@ public class UserService {
 
             usuario.setRoles(usuario.getRoles()
                     .stream()
-                    .map(role -> iRoleRepository.findByName(role.getName()))
+                    .map(role -> RoleServices.findUserByName(role.getName()))
                     .toList());
             // CRIPTOGRAFIA
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
@@ -74,7 +73,7 @@ public class UserService {
 
             usuario.setRoles(usuario.getRoles()
                     .stream()
-                    .map(role -> iRoleRepository.findByName(role.getName()))
+                    .map(role -> RoleServices.findUserByName(role.getName()))
                     .toList());
             // CRIPTOGRAFIA
             usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
@@ -97,7 +96,8 @@ public class UserService {
     }
 
     public List<User> getUsersByRole(EnumPermission role) throws UserException {
-         Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(role);
+         Role roleFound = RoleServices.findUserByName(role);
+         Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(roleFound);
 
          if(filtredByRoleUsers.isPresent()) {
              return filtredByRoleUsers.get();
