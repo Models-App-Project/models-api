@@ -41,7 +41,7 @@ public class ModelController {
     }
 
     // Endpoint para buscar uma modelo por ID
-    @GetMapping("/{id}")
+    @GetMapping("/getModel/{id}")
     public ResponseEntity<Model> getModelById(@PathVariable UUID id) {
         if (bucket.tryConsume(1)) {
             Optional<Model> model = modelService.findModelById(id);
@@ -51,10 +51,11 @@ public class ModelController {
     }
 
     // Endpoint para buscar todas as modelos
-    @GetMapping("/findAll")
+    @GetMapping("/getModels/findAll")
     public ResponseEntity<List<Model>> getAllModels() {
         if (bucket.tryConsume(1)) {
             List<Model> models = modelService.findAllModels();
+            System.out.println("Passei por aqui");
             return ResponseEntity.ok(models);
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
@@ -62,7 +63,7 @@ public class ModelController {
     }
 
     // Endpoint para buscar uma modelo por nome
-    @GetMapping("/findByName")
+    @GetMapping("/getModels/findByName")
     public ResponseEntity<Model> getModelByName(@RequestParam String name) {
         if (bucket.tryConsume(1)) {
             Optional<Model> model = modelService.findModelByName(name);
@@ -72,7 +73,7 @@ public class ModelController {
     }
 
     // Endpoint para deletar uma modelo por ID
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteModel/{id}")
     public ResponseEntity<String> deleteModelById(@PathVariable UUID id) throws ModelException {
         if (bucket.tryConsume(1)) {
             try {
@@ -87,7 +88,7 @@ public class ModelController {
     }
 
     // Endpoint para deletar uma modelo por nome
-    @DeleteMapping("/deleteByName")
+    @DeleteMapping("/deleteModel/deleteByName")
     public ResponseEntity<String> deleteModelByName(@RequestParam String name) throws ModelException {
         if (bucket.tryConsume(1)) {
             try{

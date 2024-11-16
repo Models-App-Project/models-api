@@ -47,7 +47,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    @PutMapping
+    @PutMapping("/update")
     public ResponseEntity<String> atualizarUsuario(@RequestBody User usuario, @RequestParam("file") List<MultipartFile> photos) {
         if (bucket.tryConsume(1)) {
             User usuariosalvo = userService.salvarUsuario(usuario);
@@ -57,7 +57,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    @GetMapping
+    @GetMapping("/getAllUsers")
     public ResponseEntity< Map<List<User>, List<JSONObject>> > obterUsuarios() {
 
         if (bucket.tryConsume(1)) {
@@ -81,7 +81,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getUser/{id}")
     public ResponseEntity< Map< User, JSONObject > > obterUsuario(@PathVariable UUID id) {
         if (bucket.tryConsume(1)) {
             try {
@@ -101,7 +101,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping
+    @DeleteMapping("/deleteUser")
     public ResponseEntity<String> excluirUsuario(@RequestBody User usuario) {
         if (bucket.tryConsume(1)) {
             userService.excluirUsuario(usuario);
