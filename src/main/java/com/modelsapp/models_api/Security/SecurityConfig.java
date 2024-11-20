@@ -21,7 +21,7 @@ import com.modelsapp.models_api.permission.EnumPermission;
 public class SecurityConfig {
     // Configuração do encoder de senha
 
-    @Autowired
+   @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
@@ -38,20 +38,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity.csrf(crsf -> crsf.disable())
+        /*httpSecurity.csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> {
                     // TODO REVISAR AS PERMISSÕES E OS ENDPOINTS
-                    auth.requestMatchers("/login").permitAll()
+                    auth.requestMatchers("/users/login").permitAll()
                             .requestMatchers("/*").hasAuthority(EnumPermission.ADMINISTRADOR.toString())
                             .anyRequest()
                             .authenticated();
                 });
 
         httpSecurity.addFilterBefore(
-                new LoginFilter("/login", authenticationConfiguration.getAuthenticationManager()),
+                new LoginFilter("/users/login", authenticationConfiguration.getAuthenticationManager()),
                 UsernamePasswordAuthenticationFilter.class);
         httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        return httpSecurity.build();*/
+
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return httpSecurity.build();
     }
+
+
 }
