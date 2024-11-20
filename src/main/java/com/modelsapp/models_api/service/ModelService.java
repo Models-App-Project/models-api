@@ -35,41 +35,23 @@ public class ModelService {
         return modelRepository.findAll();
     }
 
-    //Método para buscar fotos das modelos
-    public JSONObject findModelPhotos(List<FileStorage> fileStorages, UUID modelID) throws ModelException{
-
-        List<Exception> exceptions = new ArrayList<>();
-
-        JSONObject modelPhotos = new JSONObject();
-
-        modelPhotos.put("modelId", modelID);
-        modelPhotos.put("photos", new JSONArray().add(fileStorageService.getFiles(fileStorages)));
-
-        if (!exceptions.isEmpty()) {
-            throw new ModelException("Erros ao buscar fotos: " + exceptions);
-        }
-
-        return modelPhotos;
-    }
 
     // Método para salvar uma nova modelo
-    public Model saveModel(Model model) { return modelRepository.save(model); }
-
-    //Método para salvar fotos de uma modelo
-    public void saveModelPhotos(Model model, List<MultipartFile> photos) {
+    public Model saveModel(Model model, List<MultipartFile> photos) {
+        modelRepository.save(model);
         List<FileStorage> photosLocation = savePhotos(photos, model);
         model.setPhotos(photosLocation);
-        modelRepository.save(model);
+        return modelRepository.save(model);
     }
 
     //Método para atualizar fotos de uma modelo
-    public void updateModelPhotos(Model model, List<MultipartFile> photos) {
+    public List<FileStorage> updateModelPhotos(Model model, List<MultipartFile> photos) {
         model.getPhotos().forEach(fileStorage -> {
            fileStorageService.deleteFileById(fileStorage.getId());
         });
         List<FileStorage> photosLocation = savePhotos(photos, model);
-        model.setPhotos(photosLocation);
-        modelRepository.save(model);
+        return photosLocation;
+
     }
 
     // Método para buscar uma modelo por ID
@@ -115,23 +97,13 @@ public class ModelService {
     }
 
     // Método para atualizar uma modelo
-    public Model updateModel(UUID id, Model newModelData) {
+    public Model updateModel(Model newModelData, List<MultipartFile> photos) {
+        List<FileStorage> savedPhotos;
+        if(photos != null) {
+           savedPhotos = updateModelPhotos(newModelData, photos);
+           newModelData.setPhotos(savedPhotos);
+        }
         return modelRepository.save(newModelData);
-        /*return modelRepository.findModelById(id)
-                .map(existingModel -> {
-                    existingModel.setName(newModelData.getName());
-                    existingModel.setAge(newModelData.getAge());
-                    existingModel.setDescription(newModelData.getDescription());
-                    existingModel.setEyesColor(newModelData.getEyesColor());
-                    existingModel.setHairColor(newModelData.getHairColor());
-                    existingModel.setHeight(newModelData.getHeight());
-                    existingModel.setWeight(newModelData.getWeight());
-                    existingModel.setWaistline(newModelData.getWaistline());
-                    existingModel.setHip(newModelData.getHip());
-                    existingModel.setBust(newModelData.getBust());
-                    return modelRepository.save(existingModel);
-                })
-                .orElse(null);*/
     }
 
     //Recebe como parâmetro uma instância da classe modelo, cujo os atributos que estão preenchidos são os filtros que o usuário deseja aplicar.

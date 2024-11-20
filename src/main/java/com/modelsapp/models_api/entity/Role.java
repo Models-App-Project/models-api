@@ -29,7 +29,7 @@ public class Role implements Serializable {
     private EnumPermission name;
 
     @ManyToMany(mappedBy = "roles")
-    @JsonBackReference // impede loops ao criar usuarios
+    @JsonBackReference("user-roles") // Diferencia a relação com `User.roles`
     private List<User> users;
 
 }

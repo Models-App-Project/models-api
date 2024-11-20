@@ -1,11 +1,10 @@
 package com.modelsapp.models_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.modelsapp.models_api.fileStorageProperties.FileStorageProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
-
 import java.util.UUID;
 
 @Entity
@@ -17,11 +16,12 @@ public class FileStorage extends FileStorageProperties {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "model_id", nullable = false)
-    private Model model;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference("user-photos") // Relacionado ao `User.photos`
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_id")
+    @JsonBackReference("model-files") // Diferencia a relação com `Model`
+    private Model model;
 }

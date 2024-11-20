@@ -45,9 +45,14 @@ public class FileStorageService {
         return files;
     }
 
+    private void addNewUser(FileStorage newStorage, User user) {
+        newStorage.setUser(user);
+    }
+
     public FileStorage saveFile(MultipartFile file, String pathName, User user, Model model) {
         try {
             Path filePathTarget = Paths.get(pathName).toAbsolutePath().normalize();
+            Files.createDirectories(filePathTarget.getParent());
 
 
             FileStorage fileStorage = new FileStorage();
@@ -58,14 +63,17 @@ public class FileStorageService {
                 fileStorage.setModel(model);
             }
 
-
             file.transferTo(filePathTarget.toFile());
 
-            /*String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path(pathName)
-                    .toUriString();*/
+            Path fileStorageLocation = Paths.get(pathName).toAbsolutePath().normalize();
+            Resource resource = new UrlResource(fileStorageLocation.toUri());
+            fileStorage.setDownloadURL(resource.getURI().toString());
+
+            fileStorage = fileStorageRepository.save(fileStorage);
+
             return fileStorage;
         } catch (Exception e) {
+            System.out.println(e.toString());
             throw new RuntimeException(e);
         }
     }
@@ -87,7 +95,7 @@ public class FileStorageService {
         try{
             FileStorage fileStorage = fileStorageRepository.findFileStorageById(id);
             String fileName = fileStorage.getUploadDir();
-            Path filePath =  fileStorageLocation.resolve(fileName).normalize();
+            Path filePath = Paths.get(fileName).toAbsolutePath().normalize();
             Files.delete(filePath); // Deleta o arquivo
 
             this.fileStorageRepository.deleteFileStorageById(id);

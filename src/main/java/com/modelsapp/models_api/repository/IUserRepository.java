@@ -19,4 +19,8 @@ public interface IUserRepository extends JpaRepository<User, Long> {
     Optional<User> getUserById(UUID id);
 
     void deleteUserById(UUID id);
+
+    //Optional<User> save(User user);
+
+
 }

@@ -38,7 +38,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
-        httpSecurity.csrf(crsf -> crsf.disable())
+        /*httpSecurity.csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> {
                     // TODO REVISAR AS PERMISSÕES E OS ENDPOINTS
                     auth.requestMatchers("/users/login").permitAll()
@@ -52,6 +52,10 @@ public class SecurityConfig {
                 UsernamePasswordAuthenticationFilter.class);
         httpSecurity.addFilterBefore(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        return httpSecurity.build();*/
+
+        httpSecurity.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return httpSecurity.build();
     }
 

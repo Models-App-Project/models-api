@@ -1,5 +1,6 @@
 package com.modelsapp.models_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -57,10 +58,12 @@ public class Model {
     private double bust;
 
     @OneToMany(mappedBy = "model", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference("model-requests")
     private List<Requests> requests;
 
 
     @OneToMany(mappedBy = "model", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference("model-files")
     private List<FileStorage> photos;
 
 

@@ -1,5 +1,6 @@
 package com.modelsapp.models_api.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsapp.models_api.Exceptions.ModelException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.service.ModelService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 import java.util.Optional;
@@ -32,12 +34,27 @@ public class ModelController {
 
     // Endpoint para cadastrar uma nova modelo
     @PostMapping("/add")
-    public ResponseEntity<Model> addModel(@RequestBody Model model) {
-        if (bucket.tryConsume(1)) {
-            Model savedModel = modelService.saveModel(model);
-            return ResponseEntity.ok(savedModel);
+    public ResponseEntity<Model> addModel(@RequestPart("model") String model,
+                                          @RequestPart("photos") List<MultipartFile> photos
+    ) {
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Model convertdModel = objectMapper.readValue(model, Model.class);
+
+            Model savedModel= modelService.saveModel(convertdModel, photos);
+
+            if (savedModel.getId() != null) {
+
+                String assunto = "Confirmação de envio de formulário";
+                String mensagem = "Seu formulário foi enviado com sucesso!\n\nObrigado por entrar em contato. Em breve retornaremos. \n\nAtenciosamente, \nEquipe ModelsApp";
+                return new ResponseEntity<>(savedModel, HttpStatus.CREATED);
+            } else {
+                throw new Exception("Modelo não encontrado.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     // Endpoint para buscar uma modelo por ID
@@ -55,7 +72,6 @@ public class ModelController {
     public ResponseEntity<List<Model>> getAllModels() {
         if (bucket.tryConsume(1)) {
             List<Model> models = modelService.findAllModels();
-            System.out.println("Passei por aqui");
             return ResponseEntity.ok(models);
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
@@ -97,7 +113,6 @@ public class ModelController {
             } catch (ModelException e) {
                 return new ResponseEntity<>("Erro ao tentar excluir a modelo.\n" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }

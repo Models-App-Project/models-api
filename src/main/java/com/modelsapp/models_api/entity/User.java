@@ -1,5 +1,6 @@
 package com.modelsapp.models_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
@@ -41,6 +42,7 @@ public class User implements Serializable {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference("user-photos") // Identifica a relação gerenciada com `FileStorage`
     private List<FileStorage> photos;
 
 }

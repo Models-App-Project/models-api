@@ -28,7 +28,7 @@ public class UserService {
     private IUserRepository iUserRepository;
 
     @Autowired
-    private RoleServices RoleServices;
+    private RoleServices roleServices;
 
    @Autowired
    private PasswordEncoder passwordEncoder;
@@ -44,40 +44,63 @@ public class UserService {
         return this.iUserRepository.getUserById(usuarioId);
     }
 
-    public User salvarUsuario(User usuario) throws UserException{
+    public User salvarUsuario(User usuario, List<MultipartFile> photos, String role) throws UserException{
+
+            try {
+                Role newRole = roleServices.getNewRoleByString(role);
+
+                List<FileStorage> savedPhotos = salvarPhotosUsuario(usuario, photos);
+
+                usuario.setPhotos(savedPhotos);
+                usuario.setRoles(List.of(newRole));
+                roleServices.addNewUser(newRole, usuario);
+                roleServices.saveRole(newRole);
 
 
+                usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                return this.iUserRepository.save(usuario);
+            } catch (Exception e) {
+                throw new UserException(e.toString());
+            }
 
-            usuario.setRoles(usuario.getRoles()
-                    .stream()
-                    .map(role -> RoleServices.findUserByName(role.getName()))
-                    .toList());
-            // CRIPTOGRAFIA
-            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-            return this.iUserRepository.save(usuario);
 
 
     }
 
-    public void salvarPhotosUsuario(User usuario, List<MultipartFile> photos) throws UserException {
+    public List<FileStorage> salvarPhotosUsuario(User usuario, List<MultipartFile> photos) throws UserException {
         if(photos.size() > 8) {
             throw new UserException("O número máximo de fotos permitido é 8.");
         } else {
-            List<FileStorage> photosLocation = savePhotos(photos, usuario);
-            usuario.setPhotos(photosLocation);
-            iUserRepository.save(usuario);
+            List<FileStorage> savedPhotos = new ArrayList<>();
+            photos.forEach(photo -> {
+                String fileName = defaultLocation + usuario.getUsername() + "/" + photo.getOriginalFilename();
+                FileStorage savedPhoto = fileStorageService.saveFile(photo, fileName, usuario, null);
+                savedPhotos.add(savedPhoto);
+            });
+
+            return savedPhotos;
         }
     }
 
-    public User atualizarUsuario(User usuario) throws UserException {
+    public User atualizarUsuario(User usuario, List<MultipartFile> photos) throws UserException {
 
-            usuario.setRoles(usuario.getRoles()
-                    .stream()
-                    .map(role -> RoleServices.findUserByName(role.getName()))
-                    .toList());
-            // CRIPTOGRAFIA
-            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-            return this.iUserRepository.save(usuario);
+
+            try{
+                usuario.getPhotos().forEach(fileStorage -> {
+                    fileStorageService.deleteFileById(fileStorage.getId());
+                });
+
+                List<FileStorage> savedPhotos = salvarPhotosUsuario(usuario, photos);
+
+                usuario.setPhotos(savedPhotos);
+
+
+                usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                return this.iUserRepository.save(usuario);
+            } catch (Exception e) {
+                throw new UserException(e.toString());
+            }
+
 
 
     }
@@ -96,7 +119,7 @@ public class UserService {
     }
 
     public List<User> getUsersByRole(EnumPermission role) throws UserException {
-         Role roleFound = RoleServices.findUserByName(role);
+         Role roleFound = roleServices.findUserByName(role);
          Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(roleFound);
 
          if(filtredByRoleUsers.isPresent()) {

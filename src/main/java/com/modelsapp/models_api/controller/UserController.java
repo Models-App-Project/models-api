@@ -1,5 +1,6 @@
 package com.modelsapp.models_api.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsapp.models_api.entity.FileStorage;
 import com.modelsapp.models_api.service.FileStorageService;
 import org.json.simple.JSONObject;
@@ -37,42 +38,49 @@ public class UserController {
 
 
 
-    @PostMapping("/create")
-    public ResponseEntity<String> salvarUsuario(@RequestBody User usuario, @RequestParam("file") List<MultipartFile> photos) {
-        if (bucket.tryConsume(1)) {
-            User usuariosalvo = userService.salvarUsuario(usuario);
-            userService.salvarPhotosUsuario(usuariosalvo, photos);
-            return new ResponseEntity<>("Usuário salvo com sucesso! " + usuariosalvo.getUsername(), HttpStatus.CREATED);
+    @PostMapping(value = "/save", consumes = "multipart/form-data")
+    public ResponseEntity<String> salvarUsuario(
+            @RequestPart("user") String userJson,
+            @RequestPart("photos") List<MultipartFile> photos,
+            @RequestParam("role") String role
+    ) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            User user = objectMapper.readValue(userJson, User.class);
+
+            User savedUser = userService.salvarUsuario(user, photos, role);
+            return new ResponseEntity<>("Novo administrador criado: " + savedUser.getUsername(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao criar administrador: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> atualizarUsuario(@RequestBody User usuario, @RequestParam("file") List<MultipartFile> photos) {
-        if (bucket.tryConsume(1)) {
-            User usuariosalvo = userService.salvarUsuario(usuario);
-            userService.atualizarPhotosUsuario(usuariosalvo, photos);
-            return new ResponseEntity<>("Usuário atualizado " + usuariosalvo.getUsername(), HttpStatus.CREATED);
+    public ResponseEntity<String> atualizarUsuario( @RequestPart("user") String userJson,
+                                                  @RequestPart("photos") List<MultipartFile> userPhotos) {
+        try {
+            if (!bucket.tryConsume(1)) throw new Exception("Too many requests");
+            ObjectMapper objectMapper = new ObjectMapper();
+            User user = objectMapper.readValue(userJson, User.class);
+
+
+            User updatedAdmin = userService.atualizarUsuario(user, userPhotos);
+            return new ResponseEntity<>("Administrador atualizado " + updatedAdmin.getUsername(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao atualizar administrador." + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     @GetMapping("/getAllUsers")
-    public ResponseEntity< Map<List<User>, List<JSONObject>> > obterUsuarios() {
+    public ResponseEntity< List<User> > obterUsuarios() {
 
         if (bucket.tryConsume(1)) {
 
             try{
                 List<User> users = userService.obterUsuarios();
-                List<JSONObject> usersPhotos = new ArrayList<>();
-                users.forEach(user -> {
-                    if(user.getPhotos().size() > 0) {
-                        usersPhotos.add(userService.getUserPhotos(user.getPhotos(), user.getId() ));
-                    }
-                });
-                Map<List<User>, List<JSONObject>> response = Map.of(users, usersPhotos);
 
-                return new ResponseEntity<>(response, HttpStatus.OK);
+
+                return new ResponseEntity<>(users, HttpStatus.OK);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -82,17 +90,12 @@ public class UserController {
     }
 
     @GetMapping("/getUser/{id}")
-    public ResponseEntity< Map< User, JSONObject > > obterUsuario(@PathVariable UUID id) {
+    public ResponseEntity< User > obterUsuario(@PathVariable UUID id) {
         if (bucket.tryConsume(1)) {
             try {
                 Optional<User> user = userService.obterUsuarioId(id);
                 User requiredUser = user.get();
-                JSONObject userPhotos = new JSONObject();
-                if(requiredUser.getPhotos().size() > 0) {
-                    userPhotos = userService.getUserPhotos(requiredUser.getPhotos(), requiredUser.getId());
-                }
-                Map<User, JSONObject> response = Map.of(requiredUser, userPhotos);
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return new ResponseEntity<>(requiredUser, HttpStatus.OK);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -103,12 +106,12 @@ public class UserController {
 
     @DeleteMapping("/deleteUser")
     public ResponseEntity<String> excluirUsuario(@RequestBody User usuario) {
-        if (bucket.tryConsume(1)) {
+        try {
+            if (!bucket.tryConsume(1)) throw new Exception("Too many requests");
             userService.excluirUsuario(usuario);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao excluir administrador." + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
-
-
-
 }

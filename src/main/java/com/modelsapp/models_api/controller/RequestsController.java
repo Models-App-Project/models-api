@@ -65,15 +65,10 @@ public class RequestsController {
     }
 
     @GetMapping("/getModelRequest")
-    public ResponseEntity<Map< Model , List<JSONObject>>> getModelDetailsRequest(@RequestBody Requests request) {
+    public ResponseEntity<Model> getModelDetailsRequest(@RequestBody Requests request) {
         try {
             Model model = requestsServices.getModelRequestDetails(request);
-            JSONObject modelDetails = new JSONObject();
-            if(model.getPhotos().size() > 0) {
-                modelDetails = modelService.findModelPhotos(model.getPhotos(), model.getId());
-            }
-            Map<Model, List<JSONObject>> modelDetailsMap = Map.of(model, List.of(modelDetails));
-            return new ResponseEntity<>(modelDetailsMap, HttpStatus.OK);
+            return new ResponseEntity<>(model, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
