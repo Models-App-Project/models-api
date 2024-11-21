@@ -1,13 +1,7 @@
 package com.modelsapp.models_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.NonNull;
-
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -29,11 +23,18 @@ public class Requests {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "model_id", nullable = false)
-    @JsonBackReference(value = "model-requests")
     @NonNull
     private Model model;
 
+    public Requests(UUID id, @NonNull String status, @NonNull LocalDateTime requestDate, @NonNull Model model) {
+        this.id = id;
+        this.status = status;
+        this.requestDate = requestDate;
+        this.model = model;
+    }
 
+    public Requests() {
+    }
 
     public UUID getId() {
         return id;
