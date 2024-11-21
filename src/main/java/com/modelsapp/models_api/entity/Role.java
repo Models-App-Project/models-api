@@ -4,25 +4,28 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.modelsapp.models_api.permission.EnumPermission;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
 public class Role implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     @Column
     @Enumerated(EnumType.STRING)
     private EnumPermission name;
 
     @ManyToMany(mappedBy = "roles")
-    @JsonBackReference // impede loops ao criar usuarios
+    @JsonBackReference("user-roles") // Diferencia a relação com `User.roles`
     private List<User> users;
 
     public Role(Long id, EnumPermission name, List<User> users) {
@@ -57,5 +60,4 @@ public class Role implements Serializable {
     public void setUsers(List<User> users) {
         this.users = users;
     }
-
 }
