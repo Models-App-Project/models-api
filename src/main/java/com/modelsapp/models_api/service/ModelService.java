@@ -28,7 +28,7 @@ public class ModelService {
     @Autowired
     private FileStorageService fileStorageService;
 
-    private String defaultLocation = "/downloads/models/";
+    private String defaultLocation = "/models/";
 
     // Método para buscar todas as modelos
     public List<Model> findAllModels() {

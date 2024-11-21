@@ -38,7 +38,7 @@ public class UserService {
 
 
 
-    private String defaultLocation = "/downloads/users/";
+    private String defaultLocation = "/users/";
 
     public Optional<User> obterUsuarioId(UUID usuarioId) {
         return this.iUserRepository.getUserById(usuarioId);
@@ -112,7 +112,7 @@ public class UserService {
             usuario.getPhotos().forEach(fileStorage -> {
                 fileStorageService.deleteFileById(fileStorage.getId());
             });
-            List<FileStorage> photosLocation = savePhotos(photos, usuario);
+            List<FileStorage> photosLocation = salvarPhotosUsuario(usuario, photos);
             usuario.setPhotos(photosLocation);
             iUserRepository.save(usuario);
         }
@@ -129,17 +129,6 @@ public class UserService {
          }
     }
 
-    public JSONObject getUserPhotos (List<FileStorage> fileStorages, UUID userId) throws UserException {
-        JSONObject userPhotos = new JSONObject();
-        JSONArray photos = new JSONArray();
-
-        userPhotos.put("userId", userId);
-
-        photos.add(fileStorageService.getFiles(fileStorages));
-        userPhotos.put("photos", photos);
-
-        return userPhotos;
-    }
 
     public void excluirUsuario(User usuario) {
         usuario.getPhotos().forEach(fileStorage -> {
@@ -181,7 +170,7 @@ public class UserService {
         }
     }
 
-    private List<FileStorage> savePhotos(List<MultipartFile> photos, User user) {
+   /* private List<FileStorage> savePhotos(List<MultipartFile> photos, User user) {
         List<FileStorage> photosLocation = new ArrayList<>();
 
         photos.forEach(photo -> {
@@ -193,6 +182,6 @@ public class UserService {
         });
 
         return photosLocation;
-    }
+    }*/
 
 }

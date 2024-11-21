@@ -30,7 +30,6 @@ public class AdminServices {
     @Autowired
     private FileStorageService fileStorageService;
 
-    private String defaultLocation = "./downloads/users/admins/";
     @Autowired
     private RoleServices roleServices;
 
@@ -91,14 +90,7 @@ public class AdminServices {
         }
     }
 
-    public JSONObject getAdminPhotos (List<FileStorage> fileStorages, UUID userId) throws UserException {
-        try{
-            JSONObject userPhotos = userService.getUserPhotos(fileStorages, userId);
-            return userPhotos;
-        } catch (Exception e) {
-            throw new UserException("Erro ao buscar fotos do administrador.", e);
-        }
-    }
+
 
     //=======================================================================
 

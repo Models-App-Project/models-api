@@ -22,7 +22,5 @@ public class FileStorageProperties {
     @Column(nullable = false)
     private String uploadDir;
 
-    @Column(nullable = false)
-    private String downloadURL;
 }
 

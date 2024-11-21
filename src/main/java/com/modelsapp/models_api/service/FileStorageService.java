@@ -25,35 +25,27 @@ public class FileStorageService {
     @Autowired
     private FileStorageRepository fileStorageRepository;
 
-    private Path fileStorageLocation;
+    private Path fileStorageLocation = Paths.get("/api/files/downloads").toAbsolutePath().normalize();
 
 
-    public List<Resource> getFiles(List<FileStorage> filesRequesters) {
-        List<Resource> files = new ArrayList<>();
+    public Resource getFiles(String fileRequester) throws Exception {
 
-        filesRequesters.forEach(file -> {
-            try {
-                String fileName = file.getUploadDir();
-                Path fileStorageLocation = Paths.get(fileName).toAbsolutePath().normalize();
-                Resource resource = new UrlResource(fileStorageLocation.toUri());
-                files.add(resource);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
+        try{
+            Path fileStorageLocation = this.fileStorageLocation.resolve(fileRequester).toAbsolutePath().normalize();
+            Resource file = new UrlResource(fileStorageLocation.toUri());
+            return file;
+        } catch (Exception e) {
+            throw new Exception("Erro ao buscar arquivos.\n", e);
+        }
 
-        return files;
     }
 
-    private void addNewUser(FileStorage newStorage, User user) {
-        newStorage.setUser(user);
-    }
 
     public FileStorage saveFile(MultipartFile file, String pathName, User user, Model model) {
         try {
-            Path filePathTarget = Paths.get(pathName).toAbsolutePath().normalize();
-            Files.createDirectories(filePathTarget.getParent());
-
+            //Path filePathTarget = Paths.get(pathName).toAbsolutePath().normalize();
+            Path fileStorageLocation = this.fileStorageLocation.resolve(pathName).toAbsolutePath().normalize();
+            Files.createDirectories(fileStorageLocation.getParent());
 
             FileStorage fileStorage = new FileStorage();
             fileStorage.setUploadDir(pathName);
@@ -63,11 +55,7 @@ public class FileStorageService {
                 fileStorage.setModel(model);
             }
 
-            file.transferTo(filePathTarget.toFile());
-
-            Path fileStorageLocation = Paths.get(pathName).toAbsolutePath().normalize();
-            Resource resource = new UrlResource(fileStorageLocation.toUri());
-            fileStorage.setDownloadURL(resource.getURI().toString());
+            file.transferTo(fileStorageLocation.toFile());
 
             fileStorage = fileStorageRepository.save(fileStorage);
 
