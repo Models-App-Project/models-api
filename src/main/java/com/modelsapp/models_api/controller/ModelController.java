@@ -12,6 +12,7 @@ import io.github.bucket4j.Refill;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,6 +55,11 @@ public class ModelController {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
+    public ResponseEntity<Model> addModel(@RequestBody Model model) {
+        if (bucket.tryConsume(1)) {
+            Model savedModel = modelService.saveModel(model);
+            return ResponseEntity.ok(savedModel);
         }
     }
 
@@ -104,6 +110,7 @@ public class ModelController {
     }
 
     // Endpoint para deletar uma modelo por nome
+
     @DeleteMapping("/deleteModel/deleteByName")
     public ResponseEntity<String> deleteModelByName(@RequestParam String name) throws ModelException {
         if (bucket.tryConsume(1)) {

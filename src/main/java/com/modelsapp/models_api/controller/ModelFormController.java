@@ -3,8 +3,6 @@ package com.modelsapp.models_api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.ModelForm;
-import com.modelsapp.models_api.entity.User;
-import com.modelsapp.models_api.service.EmailService;
 import com.modelsapp.models_api.service.ModelFormService;
 
 import com.modelsapp.models_api.service.ModelService;
@@ -47,7 +45,6 @@ public class ModelFormController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
     // Endpoint para buscar todos os formulários das modelos

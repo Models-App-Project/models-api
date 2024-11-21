@@ -1,5 +1,10 @@
 package com.modelsapp.models_api.permission;
 
 public enum EnumPermission {
-    ADMINISTRADOR, USUARIO, MODEL
+    ADMINISTRADOR, SUB_ADMINISTRADOR, MODEL; 
+
+    @Override
+    public String toString() {
+        return "ROLE_" + name();
+    }
 }

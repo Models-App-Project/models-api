@@ -7,7 +7,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.modelsapp.models_api.entity.User;
@@ -25,11 +25,14 @@ import java.util.*;
 @RequestMapping("/users")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
     private Bandwidth limit = Bandwidth.classic(20, Refill.greedy(20, Duration.ofMinutes(1)));
     private final Bucket bucket = Bucket.builder()
             .addLimit(limit)
             .build();
-
+  
     @Autowired
     private UserService userService;
 
@@ -73,7 +76,6 @@ public class UserController {
 
     @GetMapping("/getAllUsers")
     public ResponseEntity< List<User> > obterUsuarios() {
-
         if (bucket.tryConsume(1)) {
 
             try{
@@ -102,7 +104,6 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
-
 
     @DeleteMapping("/deleteUser")
     public ResponseEntity<String> excluirUsuario(@RequestBody User usuario) {
