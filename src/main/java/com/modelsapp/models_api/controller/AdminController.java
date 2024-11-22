@@ -1,24 +1,18 @@
 package com.modelsapp.models_api.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modelsapp.models_api.Exceptions.ModelException;
-import com.modelsapp.models_api.Exceptions.UserException;
+import com.modelsapp.models_api.Execptions.ModelException;
+import com.modelsapp.models_api.Execptions.UserException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.User;
 import com.modelsapp.models_api.service.AdminServices;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 //*************
 
@@ -29,17 +23,23 @@ public class AdminController {
     @Autowired
     private AdminServices adminServices;
 
-    @GetMapping("/getAdmin")
-    public ResponseEntity< List<User> > obterTodosAdmins() throws Exception, UserException {
-        try{
-            List<User> users = adminServices.getAllAdminUsers();
-            return new ResponseEntity<>(users, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
+    @GetMapping("/getAdminLogged")
+    public ResponseEntity<User> obterAdminLogado() {
+        User loggedInAdmin = adminServices.getLoggedInAdminUser();
+        return ResponseEntity.ok(loggedInAdmin);
     }
 
+    @GetMapping("/getAdmin")
+    public ResponseEntity<List<User>> obterTodosAdmins() throws Exception, UserException {
+        try {
+            List<User> admins = adminServices.getAllAdminUsers();
+            return new ResponseEntity<>(admins, HttpStatus.OK);
+        } catch (UserException e) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
     @GetMapping("/getAllModelsRegistred")
     public ResponseEntity<List<Model>> obterTodosModelosRegistrados(@RequestBody Model modelFilters) throws ModelException, Exception {
@@ -74,14 +74,10 @@ public class AdminController {
             @RequestParam("role") String role
     ) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            User adminUser = objectMapper.readValue(adminUserJson, User.class);
-
-            // Processe o adminUser normalmente
-            User savedAdmin = adminServices.createAdminUser(adminUser, photos, role);
-            return new ResponseEntity<>("Novo administrador criado: " + savedAdmin.getUsername(), HttpStatus.CREATED);
+            User savedAdmin = adminServices.createAdminUser(adminUser);
+            return new ResponseEntity<>("Novo administrador criado " + savedAdmin.getUsername(), HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Erro ao criar administrador: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Erro ao criar administrador." + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -91,11 +87,7 @@ public class AdminController {
     public ResponseEntity<String> atualizarAdmin( @RequestPart("adminUser") String adminUserJson,
                                                   @RequestPart("photos") List<String> userPhotos) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            User adminUser = objectMapper.readValue(adminUserJson, User.class);
-
-
-            User updatedAdmin = adminServices.updateAdminUser(adminUser, userPhotos);
+            User updatedAdmin = adminServices.updateAdminUser(adminUser);
             return new ResponseEntity<>("Administrador atualizado " + updatedAdmin.getUsername(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Erro ao atualizar administrador." + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -107,10 +99,7 @@ public class AdminController {
                                                    @RequestPart("photos") List<String> photos
                                                  ) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Model convertedModel = objectMapper.readValue(modelJson, Model.class);
-
-            Model updatedModel = adminServices.updateModel(convertedModel, photos);
+            Model updatedModel = adminServices.updateModel(model);
             return new ResponseEntity<>("Modelo atualizado " + updatedModel.getName(), HttpStatus.OK);
         } catch (ModelException e) {
             return new ResponseEntity<>("Erro ao atualizar modelo." + e.toString(), HttpStatus.NO_CONTENT);
@@ -121,13 +110,14 @@ public class AdminController {
 
 
     @DeleteMapping("/deleteAdmin")
-    public ResponseEntity<String> excluirUsuario(@RequestParam UUID adminUserID) {
+    public ResponseEntity<String> excluirUsuario(@RequestBody User adminUser) {
         try {
-            adminServices.deleteAdminUser(adminUserID);
+            adminServices.deleteAdminUser(adminUser);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
             return new ResponseEntity<>("Erro ao excluir administrador." + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
 }

@@ -1,10 +1,7 @@
 package com.modelsapp.models_api.service;
 
-
-import com.modelsapp.models_api.entity.FileStorage;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.User;
-import com.modelsapp.models_api.repository.FileStorageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;

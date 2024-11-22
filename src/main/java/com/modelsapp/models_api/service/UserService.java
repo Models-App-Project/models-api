@@ -1,8 +1,6 @@
 package com.modelsapp.models_api.service;
 
-
-import com.modelsapp.models_api.Exceptions.UserException;
-import com.modelsapp.models_api.entity.FileStorage;
+import com.modelsapp.models_api.Execptions.UserException;
 import com.modelsapp.models_api.permission.EnumPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -11,15 +9,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+
 import com.modelsapp.models_api.entity.Role;
 import com.modelsapp.models_api.entity.User;
+import com.modelsapp.models_api.repository.IRoleRepository;
 import com.modelsapp.models_api.repository.IUserRepository;
-import org.springframework.web.multipart.MultipartFile;
 
-
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -28,20 +26,13 @@ public class UserService {
     private IUserRepository iUserRepository;
 
     @Autowired
-    private RoleServices roleServices;
-
-   @Autowired
-   private PasswordEncoder passwordEncoder;
+    private IRoleRepository iRoleRepository;
 
     @Autowired
-    private FileStorageService fileStorageService;
+    private PasswordEncoder passwordEncoder;
 
-
-
-    private String defaultLocation = "/users/";
-
-    public Optional<User> obterUsuarioId(UUID usuarioId) {
-        return this.iUserRepository.getUserById(usuarioId);
+    public Optional<User> obterUsuarioId(Long usuarioId) {
+        return this.iUserRepository.findById(usuarioId);
     }
 
     public User salvarUsuario(User usuario, List<String> photos, String role) throws UserException{
@@ -119,8 +110,7 @@ public class UserService {
     }
 
     public List<User> getUsersByRole(EnumPermission role) throws UserException {
-         Role roleFound = roleServices.findUserByName(role);
-         Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(roleFound);
+         Optional<List<User>> filtredByRoleUsers = this.iUserRepository.getUsersByRoles(role);
 
          if(filtredByRoleUsers.isPresent()) {
              return filtredByRoleUsers.get();
@@ -129,15 +119,13 @@ public class UserService {
          }
     }
 
-
     public void excluirUsuario(User usuario) {
-        usuario.getPhotos().forEach(fileStorage -> {
-            fileStorageService.deleteFileById(fileStorage.getId());
-        });
-        this.iUserRepository.deleteUserById(usuario.getId());
+        this.iUserRepository.deleteById(usuario.getId());
     }
 
-    public List<User> obterUsuarios() { return this.iUserRepository.findAll(); }
+    public List<User> obterUsuarios() {
+        return this.iUserRepository.findAll();
+    }
 
     public User getloggedInUser() throws UserException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -170,18 +158,5 @@ public class UserService {
         }
     }
 
-   /* private List<FileStorage> savePhotos(List<MultipartFile> photos, User user) {
-        List<FileStorage> photosLocation = new ArrayList<>();
-
-        photos.forEach(photo -> {
-
-            String uploadDir = defaultLocation + user.getUsername() + "/profile/" + photo.getOriginalFilename();
-
-            FileStorage fileStorage = fileStorageService.saveFile(photo, uploadDir, user, null);
-            photosLocation.add(fileStorage);
-        });
-
-        return photosLocation;
-    }*/
 
 }

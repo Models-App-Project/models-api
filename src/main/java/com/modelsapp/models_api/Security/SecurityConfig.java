@@ -10,11 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.modelsapp.models_api.filter.AuthenticationFilter;
-import com.modelsapp.models_api.filter.LoginFilter;
-import com.modelsapp.models_api.permission.EnumPermission;
 
 @Configuration
 @EnableWebSecurity
@@ -58,6 +53,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
         return httpSecurity.build();
     }
+
+
 
 
 }

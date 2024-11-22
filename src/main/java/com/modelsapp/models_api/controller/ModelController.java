@@ -1,7 +1,5 @@
 package com.modelsapp.models_api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modelsapp.models_api.Exceptions.ModelException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.service.ModelService;
 
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 import java.util.Optional;
@@ -55,10 +52,11 @@ public class ModelController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
     // Endpoint para buscar uma modelo por ID
-    @GetMapping("/getModel/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Model> getModelById(@PathVariable UUID id) {
         if (bucket.tryConsume(1)) {
             Optional<Model> model = modelService.findModelById(id);
@@ -68,7 +66,7 @@ public class ModelController {
     }
 
     // Endpoint para buscar todas as modelos
-    @GetMapping("/getModels/findAll")
+    @GetMapping("/findAll")
     public ResponseEntity<List<Model>> getAllModels() {
         if (bucket.tryConsume(1)) {
             List<Model> models = modelService.findAllModels();
@@ -79,7 +77,7 @@ public class ModelController {
     }
 
     // Endpoint para buscar uma modelo por nome
-    @GetMapping("/getModels/findByName")
+    @GetMapping("/findByName")
     public ResponseEntity<Model> getModelByName(@RequestParam String name) {
         if (bucket.tryConsume(1)) {
             Optional<Model> model = modelService.findModelByName(name);
@@ -89,16 +87,12 @@ public class ModelController {
     }
 
     // Endpoint para deletar uma modelo por ID
-    @DeleteMapping("/deleteModel/{id}")
-    public ResponseEntity<String> deleteModelById(@PathVariable UUID id) throws ModelException {
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
+    public ResponseEntity<Void> deleteModelById(@PathVariable UUID id) {
         if (bucket.tryConsume(1)) {
-            try {
-                modelService.deleteModelById(id);
-                return new ResponseEntity<>("Deleção realizada com sucesso.", HttpStatus.OK);
-            } catch (ModelException e) {
-                return new ResponseEntity<>("Erro ao tentar excluir a modelo.\n" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
+            modelService.deleteModelById(id);
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
@@ -107,12 +101,8 @@ public class ModelController {
     @DeleteMapping("/deleteModel/deleteByName")
     public ResponseEntity<String> deleteModelByName(@RequestParam String name) throws ModelException {
         if (bucket.tryConsume(1)) {
-            try{
-                modelService.deleteModelByName(name);
-                return new ResponseEntity<>("Deleção realizada com sucesso.", HttpStatus.OK);
-            } catch (ModelException e) {
-                return new ResponseEntity<>("Erro ao tentar excluir a modelo.\n" + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            modelService.deleteModelByName(name);
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }

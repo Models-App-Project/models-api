@@ -1,7 +1,5 @@
 package com.modelsapp.models_api.service;
 
-import com.modelsapp.models_api.Exceptions.ModelException;
-import com.modelsapp.models_api.entity.FileStorage;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.Requests;
 import com.modelsapp.models_api.repository.ModelRepository;
@@ -34,7 +32,6 @@ public class ModelService {
     public List<Model> findAllModels() {
         return modelRepository.findAll();
     }
-
 
     // Método para salvar uma nova modelo
     public Model saveModel(Model model, List<String> URL) throws ModelException {

@@ -1,4 +1,4 @@
-/*package com.modelsapp.models_api;
+package com.modelsapp.models_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,4 +10,4 @@ class ModelsApiApplicationTests {
 	void contextLoads() {
 	}
 
-}*/
+}
