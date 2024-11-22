@@ -15,6 +15,10 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,36 +32,4 @@ public class Role implements Serializable {
     @JsonBackReference("user-roles") // Diferencia a relação com `User.roles`
     private List<User> users;
 
-    public Role(Long id, EnumPermission name, List<User> users) {
-        this.id = id;
-        this.name = name;
-        this.users = users;
-    }
-
-    public Role() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public EnumPermission getName() {
-        return name;
-    }
-
-    public void setName(EnumPermission name) {
-        this.name = name;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
 }

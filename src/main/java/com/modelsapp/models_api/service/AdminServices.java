@@ -98,7 +98,7 @@ public class AdminServices {
     //CRIAR===============================================================
 
     //Cria um novo usuário administrador
-    public User createAdminUser(User admin, List<MultipartFile> photos, String role) throws UserException {
+    public User createAdminUser(User admin, List<String> photos, String role) throws UserException {
         try {
 
             if(!role.equals("ADMINISTRADOR")) {
@@ -118,7 +118,7 @@ public class AdminServices {
 
     //ATUALIZAR===============================================================
 
-    public User updateAdminUser(User admin, List<MultipartFile> photos) throws UserException {
+    public User updateAdminUser(User admin, List<String> photos) throws UserException {
 
         try {
             User updatedAdmin = userService.atualizarUsuario(admin, photos);
@@ -130,7 +130,7 @@ public class AdminServices {
 
     }
 
-    public Model updateModel(Model model, List<MultipartFile> photos) throws ModelException {
+    public Model updateModel(Model model, List<String> photos) throws ModelException {
         try {
             Model updatedModel = modelService.updateModel(model, photos);
             return updatedModel;

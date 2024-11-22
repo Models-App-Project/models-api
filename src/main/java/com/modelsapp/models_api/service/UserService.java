@@ -44,7 +44,7 @@ public class UserService {
         return this.iUserRepository.getUserById(usuarioId);
     }
 
-    public User salvarUsuario(User usuario, List<MultipartFile> photos, String role) throws UserException{
+    public User salvarUsuario(User usuario, List<String> photos, String role) throws UserException{
 
             try {
                 Role newRole = roleServices.getNewRoleByString(role);
@@ -67,13 +67,13 @@ public class UserService {
 
     }
 
-    public List<FileStorage> salvarPhotosUsuario(User usuario, List<MultipartFile> photos) throws UserException {
+    public List<FileStorage> salvarPhotosUsuario(User usuario, List<String> photos) throws UserException {
         if(photos.size() > 8) {
             throw new UserException("O número máximo de fotos permitido é 8.");
         } else {
             List<FileStorage> savedPhotos = new ArrayList<>();
             photos.forEach(photo -> {
-                String fileName = defaultLocation + usuario.getUsername() + "/" + photo.getOriginalFilename();
+                String fileName = defaultLocation + usuario.getUsername() + "/" + photo;
                 FileStorage savedPhoto = fileStorageService.saveFile(photo, fileName, usuario, null);
                 savedPhotos.add(savedPhoto);
             });
@@ -82,7 +82,7 @@ public class UserService {
         }
     }
 
-    public User atualizarUsuario(User usuario, List<MultipartFile> photos) throws UserException {
+    public User atualizarUsuario(User usuario, List<String> photos) throws UserException {
 
 
             try{
@@ -105,7 +105,7 @@ public class UserService {
 
     }
 
-    public void atualizarPhotosUsuario(User usuario, List<MultipartFile> photos) throws  UserException {
+    public void atualizarPhotosUsuario(User usuario, List<String> photos) throws  UserException {
         if(photos.size() > 8) {
             throw new UserException("O número máximo de fotos permitido é 8.");
         } else {

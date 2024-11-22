@@ -70,7 +70,7 @@ public class AdminController {
     @PostMapping(value = "/saveAdminUser", consumes = "multipart/form-data")
     public ResponseEntity<String> salvarAdmin(
             @RequestPart("adminUser") String adminUserJson,
-            @RequestPart("photos") List<MultipartFile> photos,
+            @RequestPart("photos") List<String> photos,
             @RequestParam("role") String role
     ) {
         try {
@@ -89,7 +89,7 @@ public class AdminController {
 
     @PutMapping("/updateAdmin")
     public ResponseEntity<String> atualizarAdmin( @RequestPart("adminUser") String adminUserJson,
-                                                  @RequestPart("photos") List<MultipartFile> userPhotos) {
+                                                  @RequestPart("photos") List<String> userPhotos) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             User adminUser = objectMapper.readValue(adminUserJson, User.class);
@@ -104,7 +104,7 @@ public class AdminController {
 
     @PutMapping("/updateModel")
     public ResponseEntity<String> atualizarModelo( @RequestPart("adminUser") String modelJson,
-                                                   @RequestPart("photos") List<MultipartFile> photos
+                                                   @RequestPart("photos") List<String> photos
                                                  ) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

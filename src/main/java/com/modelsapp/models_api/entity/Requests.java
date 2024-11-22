@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.NonNull;
+import org.hibernate.annotations.Type;
 
 
 import java.time.LocalDateTime;
@@ -14,58 +15,29 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "requests")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Requests {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(unique = true, length = 10)
+    @Column(unique = true)
     @NonNull
-    private String status;
+    private boolean status;
 
     @Column(unique = true)
     @NonNull
     private LocalDateTime requestDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "model_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_id")
     @JsonBackReference(value = "model-requests")
-    @NonNull
     private Model model;
 
 
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getRequestDate() {
-        return requestDate;
-    }
-
-    public void setRequestDate(LocalDateTime requestDate) {
-        this.requestDate = requestDate;
-    }
-
-    public Model getModel() {
-        return model;
-    }
-
-    public void setModel(Model model) {
-        this.model = model;
-    }
 
 
 }

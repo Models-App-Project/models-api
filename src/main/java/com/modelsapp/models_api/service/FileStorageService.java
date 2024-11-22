@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +25,8 @@ public class FileStorageService {
 
     @Autowired
     private FileStorageRepository fileStorageRepository;
+
+
 
     private Path fileStorageLocation = Paths.get("/api/files/downloads").toAbsolutePath().normalize();
 
@@ -41,23 +44,27 @@ public class FileStorageService {
     }
 
 
-    public FileStorage saveFile(MultipartFile file, String pathName, User user, Model model) {
+    public FileStorage saveFile(String URL, String pathName, User user, Model model) {
         try {
+
+
             //Path filePathTarget = Paths.get(pathName).toAbsolutePath().normalize();
             Path fileStorageLocation = this.fileStorageLocation.resolve(pathName).toAbsolutePath().normalize();
             Files.createDirectories(fileStorageLocation.getParent());
 
             FileStorage fileStorage = new FileStorage();
             fileStorage.setUploadDir(pathName);
+            fileStorage.setDownloadURL(URL);
             if(user != null){
                 fileStorage.setUser(user);
             } else if(model != null){
                 fileStorage.setModel(model);
             }
 
-            file.transferTo(fileStorageLocation.toFile());
 
-            fileStorage = fileStorageRepository.save(fileStorage);
+            //file.transferTo(fileStorageLocation.toFile());
+
+            //fileStorage = fileStorageRepository.save(fileStorage);
 
             return fileStorage;
         } catch (Exception e) {
