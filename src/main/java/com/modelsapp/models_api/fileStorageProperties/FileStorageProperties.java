@@ -26,3 +26,4 @@ public class FileStorageProperties {
     private String downloadURL;
 
 }
+

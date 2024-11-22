@@ -1,6 +1,7 @@
 package com.modelsapp.models_api.service;
 
 
+import com.modelsapp.models_api.Exceptions.UserException;
 import com.modelsapp.models_api.entity.FileStorage;
 import com.modelsapp.models_api.permission.EnumPermission;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import com.modelsapp.models_api.entity.Role;
 import com.modelsapp.models_api.entity.User;
 import com.modelsapp.models_api.repository.IUserRepository;

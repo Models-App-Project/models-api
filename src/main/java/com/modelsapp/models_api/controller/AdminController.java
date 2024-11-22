@@ -2,12 +2,14 @@ package com.modelsapp.models_api.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modelsapp.models_api.Execptions.ModelException;
-import com.modelsapp.models_api.Execptions.UserException;
+import com.modelsapp.models_api.Exceptions.ModelException;
+import com.modelsapp.models_api.Exceptions.UserException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.User;
 import com.modelsapp.models_api.service.AdminServices;
+import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
@@ -20,15 +21,15 @@ import java.util.List;
 @NoArgsConstructor
 public class Role implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     @Column
     @Enumerated(EnumType.STRING)
     private EnumPermission name;
 
     @ManyToMany(mappedBy = "roles")
-    @JsonBackReference // impede loops ao criar usuarios
+    @JsonBackReference("user-roles") // Diferencia a relação com `User.roles`
     private List<User> users;
 
 }
