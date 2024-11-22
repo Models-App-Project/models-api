@@ -6,7 +6,6 @@ import com.modelsapp.models_api.entity.Requests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.modelsapp.models_api.service.RequestsServices;
 
@@ -70,7 +69,6 @@ public class RequestsController {
     }
 
     @PostMapping("/saveRequest")
-    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<Requests> saveRequest(@RequestBody Requests request) {
         try {
             Requests savedRequest = requestsServices.saveRequest(request);
@@ -81,10 +79,9 @@ public class RequestsController {
     }
 
     @PutMapping("/updateRequest")
-    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
-    public ResponseEntity<Requests> updateRequest(@RequestBody UUID requestID, Requests request) {
+    public ResponseEntity<Requests> updateRequest(@RequestBody Requests request) {
         try {
-            Requests updatedRequest = requestsServices.updateRequest(requestID, request);
+            Requests updatedRequest = requestsServices.updateRequest(request);
             return new ResponseEntity<>(updatedRequest, HttpStatus.CREATED);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
@@ -92,7 +89,6 @@ public class RequestsController {
     }
 
     @DeleteMapping("/deleteRequest")
-    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<String> deleteRequest(@RequestBody UUID requestID) {
         try {
             requestsServices.deleteRequestById(requestID);
@@ -103,7 +99,6 @@ public class RequestsController {
     }
 
     @DeleteMapping("/deleteAllRequests")
-    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
     public ResponseEntity<String> deleteAllRequests() {
         try {
             requestsServices.deleteAllRequests();

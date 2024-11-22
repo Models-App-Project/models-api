@@ -138,7 +138,7 @@ public class AdminServices {
     //CRIAR===============================================================
 
     //Cria um novo usuário administrador
-    public User createAdminUser(User admin) throws UserException {
+    public User createAdminUser(User admin, List<String> photos, String role) throws UserException {
         try {
             User newAdmin = userService.salvarUsuario(admin);
             return newAdmin;
@@ -153,20 +153,7 @@ public class AdminServices {
 
     //ATUALIZAR===============================================================
 
-    public User updateAdminUser(User admin) throws UserException {
-        /*try{
-            User loggedInAdmin = this.getLoggedInAdminUser();
-            boolean adminLoged = this.isAdminLogged(loggedInAdmin);
-            if(adminLoged){
-                User updatedAdmin = userService.atualizarUsuario(admin);
-                return updatedAdmin;
-            }
-            else {
-                throw new UserException("Não existe usuário logado ou usuário não é administrador.");
-            }
-        } catch (Exception e) {
-            throw new UserException("Erro ao atualizar usuário administrador.", e);
-        }*/
+    public User updateAdminUser(User admin, List<String> photos) throws UserException {
 
         try {
 
@@ -179,7 +166,7 @@ public class AdminServices {
 
     }
 
-    public Model updateModel(Model model) throws ModelException {
+    public Model updateModel(Model model, List<String> photos) throws ModelException {
         try {
             Model updatedModel = modelService.updateModel(model.getId(), model);
             return updatedModel;

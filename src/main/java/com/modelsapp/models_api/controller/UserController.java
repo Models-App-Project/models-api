@@ -3,10 +3,12 @@ package com.modelsapp.models_api.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+
 import org.springframework.web.bind.annotation.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsapp.models_api.entity.User;
+import com.modelsapp.models_api.service.FileStorageService;
 import com.modelsapp.models_api.service.UserService;
 
 import io.github.bucket4j.Bandwidth;
@@ -20,28 +22,55 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-
     private Bandwidth limit = Bandwidth.classic(20, Refill.greedy(20, Duration.ofMinutes(1)));
     private final Bucket bucket = Bucket.builder()
             .addLimit(limit)
             .build();
 
-    @PostMapping
-    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString())")
-    public ResponseEntity<String> salvarUsuario(@RequestBody User usuario) {
+    @Autowired
+    private UserService userService;
 
-        if (bucket.tryConsume(1)) {
-            User usuariosalvo = userService.salvarUsuario(usuario);
-            return new ResponseEntity<>("Novo usuário criado " + usuariosalvo.getUsername(), HttpStatus.CREATED);
+    @Autowired
+    private FileStorageService fileStorageService;
+
+
+
+    @PostMapping(value = "/save", consumes = "multipart/form-data")
+    public ResponseEntity<String> salvarUsuario(
+            @RequestPart("user") String userJson,
+            @RequestPart("photos") List<String> photos,
+            @RequestParam("role") String role
+    ) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            User user = objectMapper.readValue(userJson, User.class);
+
+            User savedUser = userService.salvarUsuario(user, photos, role);
+            return new ResponseEntity<>("Novo administrador criado: " + savedUser.getUsername(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao criar administrador: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    @PutMapping
-    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString(), T(com.modelsapp.models_api.permission.EnumPermission).SUB_ADMINISTRADOR.toString())")
-    public ResponseEntity<String> atualizarUsuario(@RequestBody User usuario) {
+    @PutMapping("/update")
+    public ResponseEntity<String> atualizarUsuario( @RequestPart("user") String userJson,
+                                                  @RequestPart("photos") List<String> userPhotos) {
+        try {
+            if (!bucket.tryConsume(1)) throw new Exception("Too many requests");
+            ObjectMapper objectMapper = new ObjectMapper();
+            User user = objectMapper.readValue(userJson, User.class);
+
+
+            User updatedAdmin = userService.atualizarUsuario(user, userPhotos);
+            return new ResponseEntity<>("Administrador atualizado " + updatedAdmin.getUsername(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao atualizar administrador." + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity< List<User> > obterUsuarios() {
+
         if (bucket.tryConsume(1)) {
             User usuariosalvo = userService.salvarUsuario(usuario);
             return new ResponseEntity<>("Usuário atualizado " + usuariosalvo.getUsername(), HttpStatus.CREATED);
@@ -57,8 +86,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    @DeleteMapping
-    @PreAuthorize("hasRole(T(com.modelsapp.models_api.permission.EnumPermission).ADMINISTRADOR.toString())")
+
+    @DeleteMapping("/deleteUser")
     public ResponseEntity<String> excluirUsuario(@RequestBody User usuario) {
         if (bucket.tryConsume(1)) {
             userService.excluirUsuario(usuario);

@@ -67,8 +67,12 @@ public class AdminController {
     }
 
 
-    @PostMapping("/saveAdminUser")
-    public ResponseEntity<String> salvarAdmin(@RequestBody User adminUser) {
+    @PostMapping(value = "/saveAdminUser", consumes = "multipart/form-data")
+    public ResponseEntity<String> salvarAdmin(
+            @RequestPart("adminUser") String adminUserJson,
+            @RequestPart("photos") List<String> photos,
+            @RequestParam("role") String role
+    ) {
         try {
             User savedAdmin = adminServices.createAdminUser(adminUser);
             return new ResponseEntity<>("Novo administrador criado " + savedAdmin.getUsername(), HttpStatus.CREATED);
@@ -80,7 +84,8 @@ public class AdminController {
 
 
     @PutMapping("/updateAdmin")
-    public ResponseEntity<String> atualizarAdmin(@RequestBody User adminUser) {
+    public ResponseEntity<String> atualizarAdmin( @RequestPart("adminUser") String adminUserJson,
+                                                  @RequestPart("photos") List<String> userPhotos) {
         try {
             User updatedAdmin = adminServices.updateAdminUser(adminUser);
             return new ResponseEntity<>("Administrador atualizado " + updatedAdmin.getUsername(), HttpStatus.OK);
@@ -90,7 +95,9 @@ public class AdminController {
     }
 
     @PutMapping("/updateModel")
-    public ResponseEntity<String> atualizarModelo(@RequestBody Model model) {
+    public ResponseEntity<String> atualizarModelo( @RequestPart("adminUser") String modelJson,
+                                                   @RequestPart("photos") List<String> photos
+                                                 ) {
         try {
             Model updatedModel = adminServices.updateModel(model);
             return new ResponseEntity<>("Modelo atualizado " + updatedModel.getName(), HttpStatus.OK);

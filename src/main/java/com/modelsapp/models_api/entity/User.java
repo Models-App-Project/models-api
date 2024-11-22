@@ -1,9 +1,12 @@
 package com.modelsapp.models_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.NonNull;
 
@@ -13,6 +16,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
 
     @Serial
@@ -37,39 +44,8 @@ public class User implements Serializable {
             uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "role_id"}))
     private List<Role> roles;
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference("user-photos") // Identifica a relação gerenciada com `FileStorage`
+    private List<FileStorage> photos;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
 }

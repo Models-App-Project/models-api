@@ -35,24 +35,78 @@ public class UserService {
         return this.iUserRepository.findById(usuarioId);
     }
 
-    public User salvarUsuario(User usuario) {
-        usuario.setRoles(usuario.getRoles()
-                .stream()
-                .map(role -> iRoleRepository.findByName(role.getName()))
-                .toList());
-        // CRIPTOGRAFIA
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        return this.iUserRepository.save(usuario);
+    public User salvarUsuario(User usuario, List<String> photos, String role) throws UserException{
+
+            try {
+                Role newRole = roleServices.getNewRoleByString(role);
+
+                List<FileStorage> savedPhotos = salvarPhotosUsuario(usuario, photos);
+
+                usuario.setPhotos(savedPhotos);
+                usuario.setRoles(List.of(newRole));
+                roleServices.addNewUser(newRole, usuario);
+                roleServices.saveRole(newRole);
+
+
+                usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                return this.iUserRepository.save(usuario);
+            } catch (Exception e) {
+                throw new UserException(e.toString());
+            }
+
+
+
     }
 
-    public User atualizarUsuario(User usuario) {
-        usuario.setRoles(usuario.getRoles()
-                .stream()
-                .map(role -> iRoleRepository.findByName(role.getName()))
-                .toList());
-        // CRIPTOGRAFIA
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        return this.iUserRepository.save(usuario);
+    public List<FileStorage> salvarPhotosUsuario(User usuario, List<String> photos) throws UserException {
+        if(photos.size() > 8) {
+            throw new UserException("O número máximo de fotos permitido é 8.");
+        } else {
+            List<FileStorage> savedPhotos = new ArrayList<>();
+            photos.forEach(photo -> {
+                String fileName = defaultLocation + usuario.getUsername() + "/" + photo;
+                FileStorage savedPhoto = fileStorageService.saveFile(photo, fileName, usuario, null);
+                savedPhotos.add(savedPhoto);
+            });
+
+            return savedPhotos;
+        }
+    }
+
+    public User atualizarUsuario(User usuario, List<String> photos) throws UserException {
+
+
+            try{
+                usuario.getPhotos().forEach(fileStorage -> {
+                    fileStorageService.deleteFileById(fileStorage.getId());
+                });
+
+                List<FileStorage> savedPhotos = salvarPhotosUsuario(usuario, photos);
+
+                usuario.setPhotos(savedPhotos);
+
+
+                usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                return this.iUserRepository.save(usuario);
+            } catch (Exception e) {
+                throw new UserException(e.toString());
+            }
+
+
+
+    }
+
+    public void atualizarPhotosUsuario(User usuario, List<String> photos) throws  UserException {
+        if(photos.size() > 8) {
+            throw new UserException("O número máximo de fotos permitido é 8.");
+        } else {
+            usuario.getPhotos().forEach(fileStorage -> {
+                fileStorageService.deleteFileById(fileStorage.getId());
+            });
+            List<FileStorage> photosLocation = salvarPhotosUsuario(usuario, photos);
+            usuario.setPhotos(photosLocation);
+            iUserRepository.save(usuario);
+        }
     }
 
     public List<User> getUsersByRole(EnumPermission role) throws UserException {

@@ -118,24 +118,15 @@ public class RequestsServices {
 
 
     //ATUALIZAR=============================================================
-    public Requests updateRequest(UUID id, Requests newRequestData) throws Exception {
+    public Requests updateRequest(Requests newRequestData) throws Exception {
 
         try {
-            return requestsRepository.findRequestById(id)
-                    .map(existingRequest -> {
-                        existingRequest.setStatus(newRequestData.getStatus());
-                        existingRequest.setRequestDate(newRequestData.getRequestDate());
-                        existingRequest.setModel(newRequestData.getModel());
-                        return requestsRepository.save(existingRequest);
-                    }).orElseGet(() -> {
-                        newRequestData.setId(id);
-                        return requestsRepository.save(newRequestData);
-                    });
+            return requestsRepository.save(newRequestData);
         } catch (Exception e) {
             throw new Exception("Ocorreu um erro inesperado:" + e);
         }
-
     }
+
 
     //=======================================================================
 

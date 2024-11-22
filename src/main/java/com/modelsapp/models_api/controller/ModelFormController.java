@@ -1,9 +1,15 @@
 package com.modelsapp.models_api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modelsapp.models_api.Execptions.ModelException;
+import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.entity.ModelForm;
 import com.modelsapp.models_api.service.ModelFormService;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,9 +25,19 @@ public class ModelFormController {
 
     // Endpoint para enviar um formulário da modelo
     @PostMapping("/sendForm")
-    public ResponseEntity<ModelForm> sendModelForm(@RequestBody ModelForm model) {
-        Optional<ModelForm> savedModelForm = modelFormService.saveModelForm(model);
-        return savedModelForm.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+    public ResponseEntity<Model> sendModelForm( @RequestPart("model") String model,
+                                                    @RequestPart("photos") List<String> photos
+                                                    ) throws JsonMappingException, JsonProcessingException, ModelException {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Model convertdModel = objectMapper.readValue(model, Model.class);
+
+            Model savedModelForm = modelFormService.saveModel(convertdModel, photos);
+
+            if (savedModelForm.getId() != null) {
+                return new ResponseEntity<>(savedModelForm, HttpStatus.CREATED);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
     }
 
     // Endpoint para buscar todos os formulários das modelos
