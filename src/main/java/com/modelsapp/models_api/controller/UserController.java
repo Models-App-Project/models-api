@@ -1,22 +1,25 @@
 package com.modelsapp.models_api.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modelsapp.models_api.entity.FileStorage;
+import com.modelsapp.models_api.service.FileStorageService;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsapp.models_api.entity.User;
-import com.modelsapp.models_api.service.FileStorageService;
 import com.modelsapp.models_api.service.UserService;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -72,16 +75,30 @@ public class UserController {
     public ResponseEntity< List<User> > obterUsuarios() {
 
         if (bucket.tryConsume(1)) {
-            User usuariosalvo = userService.salvarUsuario(usuario);
-            return new ResponseEntity<>("Usuário atualizado " + usuariosalvo.getUsername(), HttpStatus.CREATED);
+
+            try{
+                List<User> users = userService.obterUsuarios();
+
+
+                return new ResponseEntity<>(users, HttpStatus.OK);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
 
-    @GetMapping
-    public ResponseEntity<List<User>> obterUsuarios() {
+    @GetMapping("/getUser/{id}")
+    public ResponseEntity< User > obterUsuario(@PathVariable UUID id) {
         if (bucket.tryConsume(1)) {
-            return new ResponseEntity<>(userService.obterUsuarios(), HttpStatus.OK);
+            try {
+                Optional<User> user = userService.obterUsuarioId(id);
+                User requiredUser = user.get();
+                return new ResponseEntity<>(requiredUser, HttpStatus.OK);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
         }
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
@@ -89,10 +106,12 @@ public class UserController {
 
     @DeleteMapping("/deleteUser")
     public ResponseEntity<String> excluirUsuario(@RequestBody User usuario) {
-        if (bucket.tryConsume(1)) {
+        try {
+            if (!bucket.tryConsume(1)) throw new Exception("Too many requests");
             userService.excluirUsuario(usuario);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao excluir administrador." + e.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
     }
-
 }

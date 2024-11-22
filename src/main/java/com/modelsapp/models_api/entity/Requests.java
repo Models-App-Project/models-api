@@ -1,5 +1,6 @@
 package com.modelsapp.models_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,11 +24,11 @@ public class Requests {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(unique = true)
+    @Column
     @NonNull
     private boolean status;
 
-    @Column(unique = true)
+    @Column
     @NonNull
     private LocalDateTime requestDate;
 

@@ -1,6 +1,6 @@
 package com.modelsapp.models_api.service;
 
-import com.modelsapp.models_api.Execptions.RequestNotFoundException;
+import com.modelsapp.models_api.Exceptions.RequestException;
 import com.modelsapp.models_api.entity.Model;
 import com.modelsapp.models_api.repository.RequestsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +20,15 @@ public class RequestsServices {
 
     @Autowired
     private RequestsRepository requestsRepository;
-    @SuppressWarnings("unused")
-    @Autowired
-    private ModelService modelService;
 
 
     //ENCONTRAR=============================================================
 
-    public List<Requests> findAllRequests() throws RequestNotFoundException, Exception {
+    public List<Requests> findAllRequests() throws RequestException, Exception {
         try {
             List<Requests> requests = requestsRepository.findAll();
             if(requests.isEmpty()) {
-                throw new RequestNotFoundException("Nenhuma requisição encontrada");
+                throw new RequestException("Nenhuma requisição encontrada");
             } else {
                 return requests;
             }
@@ -44,7 +41,7 @@ public class RequestsServices {
     //***************************************************************************************
     //Eu sei que esse método não ta escrito da melhor maneira, mas vou melhorar ele depois
     //***************************************************************************************
-    public List<Requests> findRequestsByFilter(Model model, LocalDateTime startDate, LocalDateTime endDate, String status) throws RequestNotFoundException, Exception {
+    public List<Requests> findRequestsByFilter(Model model, LocalDateTime startDate, LocalDateTime endDate, String status) throws RequestException, Exception {
         try{
             Specification<Requests> spec = Specification.where(null);
 
@@ -58,14 +55,14 @@ public class RequestsServices {
             List<Requests> requestsToFilter =  requestsRepository.findAll(spec);
 
             if(requestsToFilter.isEmpty()) {
-                throw new RequestNotFoundException("Nenhuma requisição encontrada");
+                throw new RequestException("Nenhuma requisição encontrada");
             } else {
                 if(model == null) {
                     return requestsToFilter;
                 } else {
                     requestsToFilter = requestsToFilter.stream().filter(request -> request.getModel().equals(model)).toList();
                     if(requestsToFilter.isEmpty()) {
-                        throw new RequestNotFoundException("Nenhuma requisição encontrada");
+                        throw new RequestException("Nenhuma requisição encontrada");
                     } else {
                         return requestsToFilter;
                     }
@@ -77,7 +74,7 @@ public class RequestsServices {
     }
 
 
-    public Requests findRequestById(UUID requestID) throws RequestNotFoundException, Exception {
+    public Requests findRequestById(UUID requestID) throws RequestException, Exception {
 
         try {
             Optional<Requests> request = requestsRepository.findRequestById(requestID);
@@ -85,7 +82,7 @@ public class RequestsServices {
             if(request.isPresent()) {
                 return request.get();
             } else {
-                throw new RequestNotFoundException("Request not found");
+                throw new RequestException("Request not found");
             }
         } catch (Exception e) {
             throw new Exception("Ocorreu um erro inesperado:" + e);

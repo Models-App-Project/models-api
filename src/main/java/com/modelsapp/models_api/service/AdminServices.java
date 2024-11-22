@@ -1,16 +1,19 @@
 package com.modelsapp.models_api.service;
 
-import com.modelsapp.models_api.Execptions.ModelException;
-import com.modelsapp.models_api.Execptions.UserException;
+import com.modelsapp.models_api.entity.FileStorage;
 import com.modelsapp.models_api.entity.Model;
+import com.modelsapp.models_api.entity.Role;
 import com.modelsapp.models_api.entity.User;
 import com.modelsapp.models_api.permission.EnumPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -20,12 +23,11 @@ public class AdminServices {
     private UserService userService;
     @Autowired
     private ModelService modelService;
+    @Autowired
+    private FileStorageService fileStorageService;
 
-    //Verifica se o usuário logado é um administrador
-   /* private boolean isAdminLogged(User loggedInAdmin) {
-        User admin = this.getLoggedInAdminUser();
-        return userService.isUserLoggedIn(admin.getRoles());
-    }*/
+    @Autowired
+    private RoleServices roleServices;
 
     //ENCONTRAR=============================================================
 
@@ -35,23 +37,7 @@ public class AdminServices {
     }
 
     //Retorna todos os usuários administradores
-    public List<User> getAllAdminUsers() throws UserException, Exception {
-
-        /*try {
-            boolean adminLoged = this.isAdminLogged(loggedInAdmin);
-            if(adminLoged){
-                List<User> adminUsers = userService.getUsersByRole("ADMINISTRADOR");
-                return adminUsers.stream().filter(user -> !user.equals(loggedInAdmin))
-                        .toList();
-            } else {
-                throw new UserException("Não existe usuário logado ou usuário não é administrador.");
-            }
-
-
-
-        } catch (Exception e) {
-            throw new UserException("Erro ao buscar usuários administradores.", e);
-        }*/
+    public List<User> getAllAdminUsers() throws Exception {
 
         try {
 
@@ -68,22 +54,7 @@ public class AdminServices {
     }
 
     //Retorna os dados das modelos cadastradas
-    public List<Model> getAllModels(Model filters) throws ModelException, Exception {
-
-        /*try {
-            User loggedInAdmin = this.getLoggedInAdminUser();
-            boolean adminLoged = this.isAdminLogged(loggedInAdmin);
-            if(adminLoged){
-                List<Model> modelToShow = modelService.findModelsByFilters(filters);
-                return modelToShow;
-            }
-            else {
-                throw new ModelException("Não existe usuário logado ou usuário não é administrador.");
-            }
-
-        } catch (Exception e) {
-            throw new ModelException("Erro ao buscar modelos.", e);
-        }*/
+    public List<Model> getAllModels(Model filters) throws Exception {
 
         try {
 
@@ -101,23 +72,6 @@ public class AdminServices {
 
     //Retorna os dados de uma modelo em específico
     public Model getModel(Model filters) throws ModelException {
-        /*try {
-            User loggedInAdmin = this.getLoggedInAdminUser();
-            boolean adminLoged = this.isAdminLogged(loggedInAdmin);
-            if(adminLoged){
-                Optional<Model> model = modelService.findModelById(filters.getId());
-                Model modelToShow = model.get();
-                return modelToShow;
-            }
-            else {
-                throw new UserException("Não existe usuário logado ou usuário não é administrador.");
-            }
-
-        } catch (Exception e) {
-            throw new ModelException("Erro ao buscar modelos.", e);
-        }*/
-
-
         try {
 
             Optional<Model> model = modelService.findModelById(filters.getId());
@@ -132,6 +86,8 @@ public class AdminServices {
         }
     }
 
+
+
     //=======================================================================
 
 
@@ -140,7 +96,12 @@ public class AdminServices {
     //Cria um novo usuário administrador
     public User createAdminUser(User admin, List<String> photos, String role) throws UserException {
         try {
-            User newAdmin = userService.salvarUsuario(admin);
+
+            if(!role.equals("ADMINISTRADOR")) {
+                throw new UserException("O usuário a ser criado deve ser um administrador.");
+            }
+
+            User newAdmin = userService.salvarUsuario(admin, photos, role);
             return newAdmin;
 
         } catch (Exception e) {
@@ -156,8 +117,7 @@ public class AdminServices {
     public User updateAdminUser(User admin, List<String> photos) throws UserException {
 
         try {
-
-            User updatedAdmin = userService.atualizarUsuario(admin);
+            User updatedAdmin = userService.atualizarUsuario(admin, photos);
             return updatedAdmin;
 
         } catch (Exception e) {
@@ -168,7 +128,7 @@ public class AdminServices {
 
     public Model updateModel(Model model, List<String> photos) throws ModelException {
         try {
-            Model updatedModel = modelService.updateModel(model.getId(), model);
+            Model updatedModel = modelService.updateModel(model, photos);
             return updatedModel;
         } catch (Exception e) {
             throw new ModelException("Erro ao atualizar modelo.", e);
@@ -179,23 +139,15 @@ public class AdminServices {
 
     //DELETAR===============================================================
 
-    public void deleteAdminUser(User admin) throws UserException {
-        /*try{
-            User loggedInAdmin = this.getLoggedInAdminUser();
-            boolean adminLoged = this.isAdminLogged(loggedInAdmin);
-            if(adminLoged){
-                userService.excluirUsuario(admin);
-            }
-            else {
-                throw new UserException("Não existe usuário logado ou usuário não é administrador.");
-            }
-        } catch (Exception e) {
-            throw new UserException("Erro ao deletar usuário administrador.", e);
-        }*/
+    public void deleteAdminUser(UUID admin) throws UserException {
 
         try {
-
-            userService.excluirUsuario(admin);
+            Optional<User> userToDelete = userService.obterUsuarioId(admin);
+            if(userToDelete.isPresent()) {
+                userService.excluirUsuario(userToDelete.get());
+            } else {
+                throw new UserException("Usuário administrador não encontrado.");
+            }
 
         } catch (Exception e) {
             throw new UserException("Erro ao deletar usuário administrador.", e);
